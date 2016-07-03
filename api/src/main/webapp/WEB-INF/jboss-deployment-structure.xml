@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jboss-deployment-structure>
+    <deployment>
+
+
+        <exclusions>
+            <module name="org.jboss.resteasy.resteasy-jackson-provider"/>
+            <module name="org.jboss.resteasy.resteasy-jettison-provider"/>
+        </exclusions>
+
+
+        <dependencies>
+            <module name="org.jboss.resteasy.resteasy-jackson2-provider"/>
+            <module name="com.fasterxml.jackson.core.jackson-annotations"/>
+            <module name="com.fasterxml.jackson.jaxrs.jackson-jaxrs-json-provider"/>
+            <module name="org.apache.httpcomponents"/>
+            <module name="org.infinispan.commons" />
+            <module name="org.infinispan" />
+            <module name="org.jboss.logging" />
+
+
+
+        </dependencies>
+
+
+
+    </deployment>
+</jboss-deployment-structure>

@@ -1,0 +1,25 @@
+connect
+deploy --force mysql-connector-java-5.1.36-bin.jar
+
+if (outcome != success) of /subsystem=security/security-domain=fleet:read-resource
+    /subsystem=security/security-domain=fleet:add(cache-type=default)
+end-if
+
+
+if (outcome != success) of /subsystem=security/security-domain=fleet/authentication=jaspi:read-resource
+    /subsystem=security/security-domain=fleet/authentication=jaspi:add(auth-modules=[{"code"=>"Dummy"}])
+end-if
+
+if (outcome != success) of /subsystem=security/security-domain=fleet/authentication=jaspi/login-module-stack=dummy:read-resource
+    /subsystem=security/security-domain=fleet/authentication=jaspi/login-module-stack=dummy:add(login-modules=[{"code"=>"Dummy", "flag"=>"optional"}])
+end-if
+
+if (outcome != success) of /subsystem=ee/managed-executor-service=gps:read-resource
+    /subsystem=ee/managed-executor-service=gps:add(jndi-name=java\:jboss\/ee\/concurrency\/executor\/gps, core-threads=10)
+end-if
+
+if (outcome != success) of /subsystem=ee/managed-executor-service=path:read-resource
+    /subsystem=ee/managed-executor-service=path:add(jndi-name=java\:jboss\/ee\/concurrency\/executor\/path, core-threads=10)
+end-if
+
+reload

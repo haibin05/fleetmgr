@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kmodule
+        xmlns="http://jboss.org/kie/6.0.0/kmodule">
+    <configuration>
+
+    </configuration>
+    <kbase name="basic" packages="com.yunguchang.rules" eventProcessingMode="stream">
+        <ksession name="basicKSession" type="stateful">
+            <!--<fileLogger file="drools.log" threaded="true" interval="10"/>-->
+        </ksession>
+    </kbase>
+</kmodule>

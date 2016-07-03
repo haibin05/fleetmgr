@@ -1,0 +1,98 @@
+.login-wrapper {
+  position:fixed;
+  top:0;
+  left:0;
+  height:100%;
+  width:100%;
+  z-index:9999;
+  background: url('../images/login/bg.png') no-repeat center center;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+  overflow: auto;
+  .login-panel {
+    position:absolute;
+    top:120px;
+    left:50%;
+    width:400px;
+    height:450px;
+    margin-left:-200px;
+    //margin-top:-225px;
+    padding:0 50px;
+    .logo {
+      height:144px;
+      width:100%;
+      background: url('../images/login/logo.png') no-repeat center center;
+    }
+    h3 {
+      font-size:30px;
+      color:#fff;
+      margin-top:54px;
+      margin-bottom:36px;
+      padding-bottom:10px;
+      text-align:center;
+      background: url('../images/login/divider.png') no-repeat;
+      background-position: center bottom;
+    }
+    form {
+      border:0 !important;
+    }
+    input {
+      border:0;
+      background-color:#282830;
+      background-repeat: no-repeat;
+      background-size: 18px 18px;
+      background-position: 12px 8px;
+      outline: 0;
+      width:100%;
+      padding-left:42px;
+      color:#fff;
+      font-size:22px;
+      height:35px;
+      line-height:35px;
+      margin-bottom:27px;
+      &.username {
+        background-image: url('../images/login/account_36x36.png');
+      }
+      &.password {
+        background-image: url('../images/login/pwd_36x36.png');
+      }
+    }
+    a {
+      color:rgba(0,0,0,0.54);
+      font-size:12px;
+      cursor:pointer;
+    }
+    .btn {
+      color:#fff;
+      font-size:22px;
+      height:48px;
+      margin-bottom:27px;
+    }
+    .error-msg {
+      color:#cc3300;
+      font-size:12px;
+    }
+    .copyright {
+      text-align: center;
+      font-size:12px;
+      color:#fff;
+      line-height:32px;
+      margin:0 -10px;
+
+      a {
+        font-size:14px;
+        color:#fff;
+        span {
+          display: inline-block;
+          vertical-align: middle;
+        }
+        .logo-xt {
+          margin-right: 2px;
+          vertical-align: middle;
+        }
+      }
+    }
+  }
+}

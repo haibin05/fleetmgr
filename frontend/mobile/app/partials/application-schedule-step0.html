@@ -1,0 +1,64 @@
+<div class="scrollable">
+    <div class="scrollable-content section" ng-show="!done">
+
+        <form role="form">
+            <fieldset>
+                <h5>订车时间: {{application.creationTime | date: 'MM月dd日 HH:mm'}}</h5>
+
+                <div class="form-group" style="line-height:40px;height:80px;">
+                    <span><span class="address-badge from">起</span> {{application.origin}}</span>
+                    <div style="padding-left:28px;">
+                        <span>{{application.start | date: 'MM月dd日 HH:mm'}}</span>
+                    </div>
+                </div>
+
+                <div class="form-group" style="line-height:40px;height:80px;">
+                    <span><span class="address-badge to">终</span> {{application.destination}}</span>
+                    <div style="padding-left:28px;">
+                        <span>{{application.end | date: 'MM月dd日 HH:mm'}}</span>
+                    </div>
+                </div>
+            </fieldset>
+
+            <div class="h-divider"></div>
+
+            <div class="form-group label4">
+                <label class="col-xs-2 control-label">乘车人</label>
+                <span class="form-control col-xs-10">{{application.passenger.userName}}</span>
+            </div>
+
+            <div class="form-group label4">
+                <label class="col-xs-2 control-label">人数</label>
+                <span class="form-control col-xs-10">{{application.passengers}}人</span>
+            </div>
+            <div class="form-group label4">
+                <label class="col-xs-2 control-label">事宜</label>
+                <span class="form-control col-xs-10">{{application.reason.value}}</span>
+            </div>
+            <div class="form-group label4">
+                <label class="col-xs-2 control-label">备注</label>
+                <span class="form-control col-xs-10">{{!application.comment ? '无' : application.comment}}</span>
+            </div>
+            <div class="form-group label4">
+                <label class="col-xs-2 control-label">货物描述</label>
+                <span class="form-control col-xs-10">{{!application.cargoes ? '无' : application.cargoes}}</span>
+            </div>
+        </form>
+        <div class="row bottom-btn-group" ng-if="application.status.key == 2">
+            <div class="col-xs-6">
+                <a class="btn btn-primary btn-block" ng-click="approveApplication()">同意申请</a>
+            </div>
+            <div class="col-xs-6">
+                <button class="btn btn-default btn-block" confirm="确认拒绝申请?" confirm-action="refuseApplication()">拒绝申请</button>
+            </div>
+        </div>
+        <div class="row bottom-btn-group"ng-if="application.status.key != 2" >
+            <a class="btn btn-primary btn-block" ng-click="close()">确定</a>
+        </div>
+    </div>
+
+    <div class="scrollable-content section" ng-show="done">
+        <p style="text-align: center;padding:100px 0;">您已处理成功！</p>
+        <a class="btn btn-primary btn-block" style="margin-top:80px;" ng-click="close()">确定</a>
+    </div>
+</div>

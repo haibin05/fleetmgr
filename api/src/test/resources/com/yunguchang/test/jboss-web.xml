@@ -1,0 +1,3 @@
+<jboss-web>
+    <security-domain>fleet</security-domain>
+</jboss-web>

@@ -1,0 +1,68 @@
+<div class="scrollable">
+    <div class="scrollable-content section">
+
+        <form role="form">
+            <fieldset>
+                <h5>订车时间: </h5>
+
+                <div class="form-group">
+                    <span><span class="address-badge from">起</span> {{application.origin}}</span>
+                    <div>
+                        <span>{{application.start | date: 'MM月dd日 HH:mm'}}</span>
+                        <span></span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <span><span class="address-badge to">终</span> {{application.destination}}</span>
+                    <div>
+                        <span>{{application.end | date: 'MM月dd日 HH:mm'}}</span>
+                        <span></span>
+                    </div>
+                </div>
+            </fieldset>
+
+            <div class="h-divider"></div>
+
+            <div class="form-group label4">
+                <label class="col-xs-2 control-label">乘车人</label>
+                <span class="form-control col-xs-10">
+                    {{application.passenger.userName}}
+                </span>
+            </div>
+
+            <div class="form-group label4">
+                <label class="col-xs-2 control-label">人数</label>
+                <span class="form-control col-xs-10">
+                    {{application.passengers}}人
+                </span>
+            </div>
+            <div class="form-group label4">
+                <label class="col-xs-2 control-label">事宜</label>
+                <span class="form-control col-xs-10">
+                    {{application.reason.value}}
+                </span>
+            </div>
+            <div class="form-group label4">
+                <label class="col-xs-2 control-label">备注</label>
+                <span class="form-control col-xs-10">
+                    {{!application.comment ? '无' : application.comment}}
+                </span>
+            </div>
+            <div class="form-group label4">
+                <label class="col-xs-2 control-label">货物描述</label>
+                <span class="form-control col-xs-10">
+                    {{!application.cargoes ? '无' : application.cargoes}}
+                </span>
+            </div>
+        </form>
+        <div class="row bottom-btn-group">
+            <div class="col-xs-6">
+                <a class="btn btn-primary btn-block" ng-href="cancelApplication()">立即派单</a>
+            </div>
+            <div class="col-xs-6">
+                <button class="btn btn-default btn-block" confirm="确认拒绝派单?" confirm-action="rejectApplication()">拒绝派单</button>
+            </div>
+        </div>
+    </div>
+</div>

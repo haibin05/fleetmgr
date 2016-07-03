@@ -1,0 +1,148 @@
+<!-- NOTE: Please don not delete any of the comments below -->
+<!doctype html>
+<html class="no-js" ng-app="gpsApp">
+    <head>
+        <meta charset="utf-8">
+        <title>车辆协同监控管理平台</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width">
+        <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+        <link rel="shortcut icon" type="image/ico" href="favicon.ico">
+        <!-- build:css styles/vendor.css -->
+        <!-- bower:css -->
+        <link rel="stylesheet" href="bower_components/angular-loading-bar/build/loading-bar.css" />
+        <!-- endbower -->
+        <link rel="stylesheet" href="lib/jquery-ui-custom/jquery-ui.css" />
+        <!-- endbuild -->
+
+        <!-- build:css({.tmp,app}) styles/main.css -->
+        <link rel="stylesheet" href="styles/main.css">
+        <!-- endbuild -->
+    </head>
+    <body ng-controller="MainCtrl">
+        <alert ng-repeat="alert in alerts" type="{{alert.type}}" close="alert.close()" style="top:{{10 + $index * 60}}px;">
+            <span ng-bind-html="alert.msg"></span>
+        </alert>
+
+        <div id="wrapper">
+            <div id="leftCt">
+                <div id="mainNav">
+                    <ul class="nav-list">
+                        <li>
+                            <a data-index="1" class="cars-item first-item" ng-class="{'selected': currentNav() === 'cars'}" ng-href="#cars">
+                                <i alt="车辆监管" src="images/transparent.gif" class="nav-icon icon-car"></i>
+                                <span>车辆监管</span>
+                            </a>
+                        </li>
+                        <li class="">
+                            <a data-index="2" class="drivers-item" ng-class="{'selected': currentNav() === 'drivers'}" ng-href="#drivers">
+                                <i alt="驾驶员监管" src="images/transparent.gif" class="nav-icon icon-driver"></i>
+                                <span>驾驶员监管</span>
+                            </a>
+                        </li>
+                        <li class="">
+                            <a data-index="3" class="subway-item" ng-class="{'selected': currentNav() === 'paths'}" ng-href="#/paths">
+                                <i alt="行车轨迹" src="images/transparent.gif" class="nav-icon icon-path"></i>
+                                <span>行车轨迹</span>
+                            </a>
+                        </li>
+                        <li class="">
+                            <a data-index="4" class="alarms-item" ng-class="{'selected': currentNav() === 'alarms'}" ng-href="#alarms">
+                                <i alt="报警提示" src="images/transparent.gif" class="nav-icon icon-alarm"></i>
+                                <span>报警提示</span>
+                                <span class="alarms-badge" ng-class="{active: alarmsOn}"></span>
+                            </a>
+                        </li>
+                        <li class="">
+                            <a data-index="4" class="fav-item" ng-class="{'selected': currentNav() === 'depots'}" ng-href="#depots">
+                                <i alt="回厂监管" src="images/transparent.gif" class="nav-icon icon-return"></i>
+                                <span>回厂监管</span>
+                            </a>
+                        </li>
+                        <li class="">
+                            <a data-index="5" class="parking-item" ng-class="{'selected': currentNav() === 'parking'}" ng-href="#parking">
+                                <i alt="停车场监管" src="images/transparent.gif" class="nav-icon icon-parking"></i>
+                                <span>停车点</span>
+                            </a>
+                        </li>
+                        <li class="logout-menu" title="">
+                            <a data-index="6" class="logout-item" ng-click="logout()">
+                                <button class="btn btn-sm">退出</button>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div ng-view="" id="searchPanel"></div>
+            </div>
+            <div id="mapCt"></div>
+        </div>
+
+        <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=ln3iksQhCkWG6agfP3BGNB6r"></script>
+
+        <!-- build:js scripts/vendor.js -->
+
+        <!-- bower:js -->
+        <script src="bower_components/angular/angular.js"></script>
+        <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+        <script src="bower_components/angular-cookies/angular-cookies.js"></script>
+        <script src="bower_components/angular-loading-bar/build/loading-bar.js"></script>
+        <script src="bower_components/angular-resource/angular-resource.js"></script>
+        <script src="bower_components/angular-route/angular-route.js"></script>
+        <script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
+        <script src="bower_components/jquery/dist/jquery.js"></script>
+        <script src="bower_components/modernizr/modernizr.js"></script>
+        <script src="bower_components/lodash/lodash.js"></script>
+        <script src="bower_components/restangular/dist/restangular.js"></script>
+        <script src="bower_components/moment/moment.js"></script>
+        <script src="bower_components/angular-moment/angular-moment.js"></script>
+        <!-- endbower -->
+        <script src="bower_components/angular-i18n/angular-locale_zh-cn.js"></script>
+        <script src="lib/jquery-ui-custom/jquery-ui.js"></script>
+        <!-- endbuild -->
+
+        <!-- Any include make it between the build comments below -->
+        <!-- build:js({app,.tmp}) scripts/main.js -->
+        <script src="scripts/mainApp.js"></script>
+
+        <script src="scripts/services/mapService.js"></script>
+        <script src="scripts/services/carsService.js"></script>
+        <script src="scripts/services/driversService.js"></script>
+        <script src="scripts/services/alarmsService.js"></script>
+        <script src="scripts/services/depotsService.js"></script>
+        <script src="scripts/services/authService.js"></script>
+        <script src="scripts/services/userService.js"></script>
+        <script src="scripts/services/fleetsService.js"></script>
+        <script src="scripts/services/alertService.js"></script>
+
+        <script src="scripts/directives/carStatusPicker.js"></script>
+        <script src="scripts/directives/driverStatusPicker.js"></script>
+        <script src="scripts/directives/parkingFleetPicker.js"></script>
+        <script src="scripts/directives/alarmTypePicker.js"></script>
+
+        <script src="scripts/filters/sampleFilter.js"></script>
+
+        <script src="scripts/controllers/mainController.js"></script>
+        <script src="scripts/controllers/carsController.js"></script>
+        <script src="scripts/controllers/carSchedulesController.js"></script>
+        <script src="scripts/controllers/driversController.js"></script>
+        <script src="scripts/controllers/driverSchedulesController.js"></script>
+        <script src="scripts/controllers/pathsController.js"></script>
+        <script src="scripts/controllers/carPathsController.js"></script>
+        <script src="scripts/controllers/alarmsController.js"></script>
+        <script src="scripts/controllers/depotsController.js"></script>
+        <script src="scripts/controllers/parkingController.js"></script>
+        <script src="scripts/controllers/mapDebugController.js"></script>
+        <script src="scripts/controllers/carMapDebugController.js"></script>
+        <script src="scripts/controllers/loginController.js"></script>
+
+        <script src="scripts/utility/constant.js"></script>
+        <script src="scripts/utility/util.js"></script>
+        <script src="scripts/utility/PathSlider.js"></script>
+        <script src="scripts/utility/ScheduleInfoWindow.js"></script>
+        <script src="scripts/utility/CopyrightBadge.js"></script>
+        <!-- inject:partials -->
+        <!-- endinject -->
+        <!-- endbuild -->
+
+    </body>
+</html>

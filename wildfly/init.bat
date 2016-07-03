@@ -1,0 +1,1 @@
+jboss-cli.bat --file=fleet.cli

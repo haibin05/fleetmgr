@@ -1,0 +1,19 @@
+<enunciate>
+    <api-classes>
+
+        <include  pattern="com.yunguchang.**"/>
+    </api-classes>
+    <services>
+        <rest defaultRestSubcontext="/api"/>
+
+
+    </services>
+    <modules>
+
+        <docs includeDefaultDownloads="false"  freemarkerTemplate="enunciate-docs.fmt"/>
+        <java-json-client disabled="true"/>
+        <java-xml-client disabled="true"/>
+        <swagger basePath="/api"/>
+
+    </modules>
+</enunciate>

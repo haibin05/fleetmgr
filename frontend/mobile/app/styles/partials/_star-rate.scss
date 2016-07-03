@@ -1,0 +1,25 @@
+.rating {
+  color: #a9a9a9;
+  margin: 0;
+  padding: 0;
+  li {
+    list-style-type: none;
+    display: inline-block;
+    padding: 1px;
+    text-align: center;
+    font-weight: bold;
+    font-size:28px;
+    cursor: pointer;
+    width:35px;
+    height:35px;
+    background-image: url('../images/icon-sprite_70-70.png');
+    background-size: 70px 35px;
+  }
+  .filled {
+    background-position: -35px 0;
+  }
+}
+
+ul.rating {
+  display: inline-block;
+}

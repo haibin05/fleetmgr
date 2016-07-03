@@ -1,0 +1,27 @@
+
+<button type="button" class="btn btn-link picker-toggle">
+    筛选
+    <span class="caret"></span>
+</button>
+
+<div class="picker-menu">
+    <div style="padding:10px;"><button class="btn btn-block btn-primary" ng-click="ok()">确定</button></div>
+    <div class="state-list">
+        <div class="list-label">驾驶员状态:</div>
+        <div class="list-content">
+            <span class="option-item" data-value="{{k}}" ng-click="toggleState(opt.value, opt.name)" ng-repeat="opt in carStatusOpts" ng-class="{'active': value.status == opt.value}">{{opt.name}}</span>
+        </div>
+    </div>
+    <div class="fleet-list">
+        <div class="list-label">车队选择:</div>
+        <div class="list-content">
+            <div class="col" ng-repeat="f in fleets" >
+                <span class="option-item" data-value="true" ng-click="toggleFleet(f.id, f.name)" ng-class="{'active': value.fleetId == f.id}">{{f.name}}</span>
+            </div>
+        </div>
+    </div>
+    <div class="text-center">
+        <button class="btn btn-default" ng-click="clear()">重置</button>
+    </div>
+    <div style="padding:10px;"><button class="btn btn-block btn-primary" ng-click="ok()">确定</button></div>
+</div>

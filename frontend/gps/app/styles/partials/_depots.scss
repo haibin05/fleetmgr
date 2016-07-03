@@ -1,0 +1,88 @@
+.page-tab-header {
+  @include clearfix;
+  border-top:1px solid #d6d6d6;
+  border-bottom:1px solid #d6d6d6;
+  .page-tab {
+    float:left;
+    width:50%;
+    height:60px;
+    line-height:60px;
+    text-align: center;
+    cursor: pointer;
+    &.active {
+      color: #2ea9df;
+    }
+    &:first-child {
+      border-right:1px solid #d6d6d6;
+    }
+  }
+}
+
+.depot-panel {
+  .search-form {
+    padding:10px;
+    .input-group {
+      width:134px;
+    }
+    .btn-search {
+      float:left;
+      margin-left:10px;
+    }
+  }
+
+  > h5 {
+    color: #2ea9df;
+    padding-left:10px;
+    margin:0 0 10px 0;
+  }
+
+  .fleet-list {
+    > h5 {
+      margin:0;
+      background: #d6d6d6;
+      padding-left:10px;
+    }
+    .list-group {
+      .list-group-item {
+        .cell-icon {
+          display: inline-block;
+          width:32px;
+          height:32px;
+          background-image: url(../images/icon-sprite01.png);
+          background-size:448px 64px;
+          background-position: -160px -32px;
+          vertical-align: middle;
+        }
+        .cell-badge {
+          padding-left:10px;
+          display:inline-block;
+          vertical-align: middle;
+          width:90px;
+        }
+        .cell-driver {
+          padding-left:10px;
+          display:inline-block;
+          vertical-align: middle;
+          width:300px;
+        }
+
+        a {
+          color:#333;
+        }
+
+        &.red {
+          color: red;
+          a {
+            color:red;
+          }
+        }
+        &.blue {
+          color: blue;
+          a {
+            color:blue;
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,26 @@
+<input type="text" ng-model="value.badge" class="form-control" placeholder="选择车辆" ng-required="true" ng-click="togglePicker()" readonly>
+
+<div class="scrollable picker-popup" ng-class="{'open': active}">
+    <div class="scrollable-header search-wrapper">
+        <input type="search" class="form-control needsclick" style="width:100%;" ng-model="params.keyword" placeholder="请输入您要搜索的车辆车牌号">
+        <span class="btn" style="position: absolute;top: 15px;right: 15px;" ng-click="active=false">关闭</span>
+    </div>
+    <div class="scrollable-content" ui-scroll-bottom="loadMore()">
+        <div class="list-group">
+            <div class="media list-group-item" ng-repeat="car in cars" ng-click="selectItem(car)">
+                <div class="media-left">
+                    <i class="m-icon m-icon-car"></i>
+                </div>
+                <div class="media-body">
+                    <h5 class="media-heading">
+                        {{car.badge}}
+                    </h5>
+                    <p>{{car.model}} | 限载{{car.capacity}}人</p>
+                </div>
+            </div>
+        </div>
+        <div ng-show="loading" class="app-content-loading text-center">
+            <i class="fa fa-spinner fa-spin loading-spinner"></i>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,16 @@
+.settings
+.idea
+target
+*.iml
+setenv.bat
+node
+src/main/frontend/node_modules
+src/main/frontend/bower_components
+*.log
+*.orig
+
+.sass-cache
+.tmp
+src/main/frontend/dist/
+
+~$*.docx

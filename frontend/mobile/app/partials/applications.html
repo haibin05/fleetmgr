@@ -1,0 +1,39 @@
+<div class="scrollable">
+    <div class="btn-group justified" data-toggle="buttons">
+        <a class="btn btn-default" ng-class="{'active': filter==2}" ng-click="toggleFilter(2)">申请审核</a>
+        <a class="btn btn-default" ng-class="{'active': filter=='2:3'}" ng-click="toggleFilter('2:3')">申请调度</a>
+        <a class="btn btn-default" ng-class="{'active': filter==4}" ng-click="toggleFilter(4)">调度成功</a>
+        <a class="btn btn-default" ng-class="{'active': filter==5}" ng-click="toggleFilter(5)">审批退回</a>
+        <a class="btn btn-default" ng-class="{'active': filter==6}" ng-click="toggleFilter(6)">调度退回</a>
+        <a class="btn btn-default" ng-class="{'active': filter==7}" ng-click="toggleFilter(7)">调度作废</a>
+        <a class="btn btn-default" ng-class="{'active': filter==8}" ng-click="toggleFilter(8)">取消申请</a>
+    </div>
+    <div class="scrollable-content section"  ui-scroll-bottom="loadMore()">
+        <a class="btn btn-primary" style="margin:20px 0;" ng-href="#application/form">+ 新增用车申请</a>
+        <div class="list-group">
+            <div class="list-group-item" style="border:1px solid #2ea9df;" ng-repeat="r in applys">
+                <h5 class="clearfix" style="border-bottom:1px solid #2ea9df;margin:0 -15px;color:#2ea9df;padding:0 30px;line-height:38px;">
+                    <span class="pull-left">用车申请</span>
+                    <span class="pull-right">{{r.status.value}}</span>
+                </h5>
+                <div style="padding:15px;">
+                    <p><span class="address-badge from">起</span> {{r.origin}}</p>
+                    <p style="padding-left:24px;">{{r.start | date: 'MM月dd日 HH:mm'}}</p>
+                    <p><span class="address-badge to">终</span> {{r.destination}}</p>
+                    <p style="padding-left:24px;">{{r.end | date: 'MM月dd日 HH:mm'}}</p>
+                    <p>人数: {{r.passengers}}</p>
+                    <p>事宜: {{r.reason.value}}</p>
+                    <div class="clearfix">
+                        <a class="btn btn-default pull-right" style="margin-top:20px;" ng-href="#applications/{{r.id}}">查看详情</a>
+                        <a class="btn btn-default pull-right" style="margin-top:20px;margin-right:10px;" ng-href="#/applications/{{r.id}}/schedule/step0" ng-if="r.status.key==2">审核</a>
+                        <a class="btn btn-default pull-right" style="margin-top:20px;margin-right:10px;" ng-href="#/applications/{{r.id}}/schedule/step1" ng-if="r.status.key==3">派单</a>
+                        <a class="btn btn-default pull-right" style="margin-top:20px;margin-right:10px;" ng-href="#/schedules/{{r.schedule.id}}" ng-if="r.status.key==4">修改派单</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div ng-show="loading" class="app-content-loading text-center">
+            <i class="fa fa-spinner fa-spin loading-spinner"></i>
+        </div>
+    </div>
+</div>

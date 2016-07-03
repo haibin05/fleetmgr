@@ -1,0 +1,18 @@
+.tag {
+  font-size:12px;
+  border-radius:6px;
+  padding:1px 2px;
+  margin-left:10px;
+  &.red {
+    color:#fd1000;
+    border: 1px solid #fd1000;
+  }
+  &.yellow {
+    color:#ff9300;
+    border: 1px solid #ff9300;
+  }
+  &.blue {
+    color:#2ea9df;
+    border: 1px solid #2ea9df;
+  }
+}

@@ -1,0 +1,30 @@
+.list-top {
+  display: block;
+  height: 40px;
+  //position: absolute;
+  top: 25px;
+  left: 0px;
+  width: 100%;
+
+  .filter-container {
+    position: relative;
+
+    .filter-type-btn {
+      font-size: 14px;
+    }
+
+    ul.filter-type-list {
+      position: absolute;
+      min-width: 150px;
+      top: -4px;
+
+      li {
+        a {
+          padding-left: 12px;
+          font-size: 14px;
+        }
+      }
+
+    }
+  }
+}

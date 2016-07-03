@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+         version="3.0">
+    <display-name>fleet</display-name>
+    <context-param>
+        <param-name>resteasy.media.type.mappings</param-name>
+        <param-value>html : text/html, json : application/json, xml : application/xml, xlsx : application/vnd.openxmlformats-officedocument.spreadsheetml.sheet</param-value>
+    </context-param>
+
+    <context-param>
+        <param-name>resteasy.providers</param-name>
+        <param-value>org.jboss.resteasy.plugins.providers.jackson.Jackson2JsonpInterceptor</param-value>
+    </context-param>
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>
+            classpath:application.conf
+        </param-value>
+    </context-param>
+
+
+    <error-page>
+        <exception-type>java.lang.Throwable</exception-type>
+        <location>/AppExceptionHandler</location>
+    </error-page>
+</web-app>

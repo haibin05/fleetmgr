@@ -1,0 +1,89 @@
+<h4 class="search-header"><a ng-href="#paths"><i class="icon-back"></i> {{car.badge}}</a></h4>
+
+<div class="map-top-bar">
+    <a ng-href="{{export()}}" target="_blank" class="map-bar-btn"><i class="icon-export"></i></a>
+</div>
+
+<form class="form-horizontal clearfix">
+    <div style="float:left;width:230px;">
+        <div class="clearfix" style="width:100%">
+            <label class="pull-left" style="width:84px;line-height:63px;padding-left:10px;">日&#160;&#160;&#160;&#160;&#160;&#160;期:</label>
+            <div class="pull-left" style="width:136px;">
+                <p class="input-group">
+                    <input type="text" name="beginDate" class="form-control span3" datepicker-popup="yyyy-MM-dd" ng-change="dirty=true"
+                           ng-model="params.day" is-open="status.opened" ng-required="true"
+                           current-text="今天" clear-text="清除" close-text="关闭" />
+                    <span class="input-group-btn">
+                      <span class="btn btn-default" ng-click="openCalendar($event)"><i class="icon-calendar"></i></span>
+                    </span>
+                </p>
+            </div>
+        </div>
+        <div class="clearfix" style="width:100%;">
+            <label class="pull-left" style="width:84px;line-height:40px;padding-left:10px;">起止时间:</label>
+            <div class="pull-left" style="width:65px;">
+                <input type="text" ng-model="params.startTime" ng-pattern="/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/"
+                       placeholder="00:00" style="width:60px;height:32px;font-size:11px;" required=""/>
+            </div>
+            <div class="pull-left" style="width:6px;line-height:30px;">-</div>
+            <div class="pull-left" style="width:65px;">
+                <input type="text" ng-model="params.endTime" ng-pattern="/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/"
+                       placeholder="00:00" style="width:60px;height:32px;font-size:11px;" required=""/>
+            </div>
+        </div>
+    </div>
+    <div style="float:left;width:46px;height:100%;">
+        <button class="btn btn-default search-btn" ng-click="doSearch()"><span>搜索</span></button>
+    </div>
+</form>
+</div>
+
+<hr class="h-divider">
+
+<div class="clearfix" style="height:75px;text-align: center;">
+    <div class="pull-left text-center" style="width:50%;height:100%;border-right:1px solid #d6d6d6">
+        <div style="font-size:20px;color:#2ea9df;padding:10px 0 5px 0;">{{totalDistance}}KM</div>
+        <div>总计里程</div>
+    </div>
+    <div class="pull-left text-center btn btn-default btn-block" style="width:50%;height:100%;border:0;border-radius:0;padding:0;"
+         ng-click="schedulesShowed=!schedulesShowed" ng-class="{active:schedulesShowed}">
+        <div style="font-size:20px;color:#2ea9df;padding:10px 0 5px 0;">{{scheduleDistance}}KM</div>
+        <div>任务里程</div>
+    </div>
+</div>
+
+<div ng-show="schedulesShowed">
+    <div ng-repeat="sch in schedules">
+        <hr class="h-divider">
+        <h4 style='margin:0 0 5px 20px;padding:0.2em 0;'>{{sch.start | date:"MM/dd HH:mm"}} - {{sch.end | date:"MM/dd HH:mm"}}</h4>
+        <hr style='margin:4px 0;'>
+        <p style='margin:0 0 0 10px;line-height:1.5;font-size:13px;'><span style='display:inline-block;width:10px;height:10px;border-radius:50%;background: green;'></span>开始里程 {{sch.scheduleCars && sch.scheduleCars.length>0 ? sch.scheduleCars[0].startMiles : 0}}KM</p>
+        <p style='margin:0 0 0 10px;line-height:1.5;font-size:13px;'><span style='display:inline-block;width:10px;height:10px;'></span>{{sch.startPoint}}</p>
+        <p style='margin:0 0 0 10px;line-height:1.5;font-size:13px;'><span style='display:inline-block;width:10px;height:10px;border-radius:50%;background: red;'></span>结束里程 {{sch.scheduleCars && sch.scheduleCars.length>0 ? sch.scheduleCars[0].endMiles : 0}}KM</p>
+        <p style='margin:0 0 0 10px;line-height:1.5;font-size:13px;'><span style='display:inline-block;width:10px;height:10px;'></span>{{sch.wayPoint}}</p>
+    </div>
+</div>
+
+<h5 style="margin:0;padding:10px;border-top:1px solid #d6d6d6;border-bottom:1px solid #d6d6d6;background: #f7f7f7;">行驶记录</h5>
+<div class="list-group result-list">
+    <div class="media list-group-item" ng-repeat="p in paths" ng-click="showPathPortion($index)" ng-class="{'active': selectedIndex === $index}">
+        <div class="media-left">
+            <img ng-if="p.alarms == 'SPPEDING'" class="media-object" src="images/car_repair_64x64.png" alt="超速">
+            <img ng-if="!p.alarms && p.moving" class="media-object" src="images/car_busy_64x64.png" alt="正常">
+            <img ng-if="!p.alarms && !p.moving" class="media-object" src="images/car_idle_64x64.png" alt="停车">
+        </div>
+        <div class="media-body">
+            <h4 class="media-heading">
+                {{p.start | date:"HH:mm"}} - {{p.end | date:"HH:mm"}}
+                <span ng-if="p.alarms == 'SPPEDING'" class="tag red">超速</span>
+                <span ng-if="!p.alarms && p.moving" class="tag blue">正常</span>
+                <span ng-if="!p.alarms && !p.moving" class="tag yellow">停车</span>
+            </h4>
+            <p>目的地：{{p.targetLocation || '查询中...'}}</p>
+        </div>
+    </div>
+</div>
+
+<p  class="empty-msg" ng-if="paths.length < 1">
+    无行驶记录
+</p>

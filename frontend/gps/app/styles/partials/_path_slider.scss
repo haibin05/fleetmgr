@@ -1,0 +1,55 @@
+.path-slider-wrapper {
+  display: none;
+  width:586px;
+  height:50px;
+  background: rgba(0, 0, 0, 0.5);
+  left:50%;
+  margin-left:-293px;
+  @include clearfix();
+  .ui-slider-horizontal {
+    float:left;
+    width:410px;
+    top:20px;
+    margin:0 8px;
+    background: #2ea9df;
+    border:0;
+    .ui-slider-handle {
+      width:40px;
+      height:40px;
+      border:0;
+      background: url('../images/marker_car_busy_80x80.png');
+      background-size: 40px 40px;
+      margin-left: -20px;
+      top:-40px;
+      text-align: center;
+      font-size:12px;
+      color:#fff;
+      &:focus {
+        outline: none;
+      }
+    }
+    .ui-slider-range {
+      background: #2ea9df;
+    }
+    .tip {
+      width:40px;
+      position: absolute;
+      z-index: 1020;
+      display: block;
+      padding: 5px;
+      font-size: 11px;
+      visibility: visible;
+      bottom:-32px;
+      left:0px;
+    }
+  }
+  .start-time, .end-time{
+    float:left;
+    width:80px;
+    line-height:50px;
+    height:100%;
+    background: #000;
+    color:#fff;
+    text-align: center;
+  }
+}

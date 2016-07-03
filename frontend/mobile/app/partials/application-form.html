@@ -1,0 +1,69 @@
+<div class="scrollable">
+    <div class="scrollable-content section" ng-show="!done" style="padding-top:0;">
+
+        <form role="form" name="applicationForm" style="margin:0 -15px;" >
+            <fieldset>
+                <div class="form-group with-icon">
+                    <passenger-picker ng-model="application.passenger"></passenger-picker>
+                    <i class="input-icon input-icon-user"></i>
+                </div>
+
+                <div class="duration-input-group">
+                    <div class="form-group with-icon">
+                        <input type="text" pick-a-date="application.startDate" style="width:80px;height:46px;" min-date="minStartDate"
+                               pick-a-date-options="{onSet:onStartDateChange}" placeholder="开始日期" ng-required="true">
+                        <input id="startTimePicker" type="text" pick-a-time="application.startDate" style="width:50px;"
+                               pick-a-time-options="{onSet:onStartTimeChange}" placeholder="开始时间" ng-required="true">
+                    </div>
+
+                    <div class="form-group with-icon">
+                        <input type="text" pick-a-date="application.endDate" style="width:80px;height:46px;" min-date="minEndDate" max-date="maxEndDate"
+                               placeholder="结束日期" ng-required="true">
+                        <input type="text" pick-a-time="application.endDate" style="width:50px;"
+                               placeholder="结束时间" ng-required="true">
+                    </div>
+                </div>
+
+                <div class="path-input-group">
+                    <div class="form-group with-icon">
+                        <input type="text" class="form-control" ng-model="application.origin" placeholder="请输入出发地" ng-required="true">
+                    </div>
+
+                    <div class="form-group with-icon">
+                        <input type="text" class="form-control" ng-model="application.destination" placeholder="请输入目的地" ng-required="true">
+                    </div>
+                </div>
+
+            </fieldset>
+
+            <div class="h-divider"></div>
+
+            <div class="form-group with-pad">
+                <label>人数</label>
+                <input type="number" class="form-control" style="display:inline-block;padding-left:0;width:calc(100% - 110px);height:46px;margin-left:10px;" ng-model="application.passengers"  placeholder="请输入乘车人数" min="1" ng-required="true">
+            </div>
+            <div class="form-group with-pad">
+                <label>事宜</label>
+                <select class="form-control" style="display:inline-block;padding-left:0;width:calc(100% - 110px);height:46px;margin-left:10px;"
+                        ng-model="application.reasons.key" ng-required="true" ng-options="r.key as r.value for r in reasonTypes"></select>
+            </div>
+            <div class="form-group with-pad">
+                <label>备注</label>
+                <input type="text" class="form-control" ng-model="application.comment" style="display:inline-block;padding-left:0;width:calc(100% - 110px);margin-left:10px;" placeholder="请写下您的备注">
+            </div>
+            <div class="form-group with-pad" style="height:auto;padding:10px 15px;">
+                <label style="vertical-align: top;">货物描述</label>
+                <textarea placeholder="仅限50字" ng-model="application.cargoes" maxlength="50" style="width:calc(100% - 80px);margin-left:10px;" rows="3"></textarea>
+            </div>
+
+        </form>
+        <div class="bottom-btn-group">
+            <button class="btn btn-primary btn-block" ng-disabled="applicationForm.$invalid || processing" ng-click="submit(applicationForm)">申请用车</button>
+        </div>
+    </div>
+
+    <div class="scrollable-content section" ng-show="done">
+        <p style="text-align: center;padding:100px 0;">您的申请已提交成功！</p>
+        <a class="btn btn-primary btn-block" style="margin-top:80px;" ng-click="close()">确定</a>
+    </div>
+</div>

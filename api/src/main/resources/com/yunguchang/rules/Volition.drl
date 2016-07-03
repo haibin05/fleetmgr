@@ -1,0 +1,74 @@
+import com.yunguchang.model.common.GpsPoint
+import com.yunguchang.model.common.Car
+import java.util.List
+import com.yunguchang.model.common.AlarmEvent
+import com.yunguchang.model.common.Alarm
+import com.yunguchang.model.common.ScheduleCar
+import com.yunguchang.model.common.Schedule
+import org.joda.time.DateTime
+import com.yunguchang.gps.Const
+import function com.yunguchang.gps.GpsUtil.getDistance
+import function com.yunguchang.alarm.RulesUtil.debug;
+import function com.yunguchang.alarm.RulesUtil.info;
+
+global javax.enterprise.event.Event alarmEventSource
+global javax.enterprise.event.Event alarmClearEventSource
+dialect  "mvel"
+
+declare GpsPoint
+    @role( event )
+    @timestamp(sampleTime.millis)
+    @expires( 12h )
+end
+
+
+
+
+
+declare AlarmEvent
+    @role( event )
+    @timestamp(start.millis)
+end
+
+
+rule "fire voliation driving when go far away from depot"
+    no-loop true
+    when
+        $car:Car($carId:id, volition>=3,depot!=null)
+        $points:List( size >0 )
+                                from collect( GpsPoint(car.id==$carId,speed > 0) over window:time( 2m ) )
+        List(size == 0) from collect ( GpsPoint(eval(getDistance(lat,lng,$car.depot.lat,$car.depot.lng)<com.yunguchang.gps.Const.DISTANCE_TO_DEPOT)) from $points)
+        $lastPoint : GpsPoint(car.id==$carId ) from $points.get($points.size-1)
+        List(size == 0) from collect ( AlarmEvent(car.id==$carId,alarm==Alarm.VIOLATION,end==null ))
+    then
+        with (alarmEvent = new AlarmEvent()) {
+               alarm = Alarm.VIOLATION,
+               car = $car,
+               start = $lastPoint.sampleTime,
+               gpsPoint = $lastPoint
+            };
+        //    AlarmEvent alarmEvent=new AlarmEvent();
+        //    alarmEvent.setAlarm(Alarm.SPEEDING);
+        //    alarmEvent.setCar($car);
+        //    alarmEvent.setStart(getLatestPoint($points).getSampleTime());
+        insert(alarmEvent);
+        alarmEventSource.fire(alarmEvent);
+        info(drools,alarmEvent)
+end
+
+
+
+
+rule "clear voliation alarm when car volition is decreased"
+    no-loop true
+when
+     $car:Car($carId:id,volition<3)
+     $alarmEvent: AlarmEvent(car.id==$carId,alarm==Alarm.VIOLATION, end==null)
+
+    then
+        $alarmEvent.end=new DateTime(drools.getWorkingMemory().getSessionClock().getCurrentTime());
+        update($alarmEvent)
+        clearAlarmEventSource.fire($alarmEvent);
+        info(drools,$alarmEvent)
+end
+

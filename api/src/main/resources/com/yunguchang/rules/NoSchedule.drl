@@ -1,0 +1,153 @@
+import com.yunguchang.model.common.GpsPoint
+import com.yunguchang.model.common.Car
+import java.util.List
+import com.yunguchang.model.common.AlarmEvent
+import com.yunguchang.model.common.Alarm
+import com.yunguchang.model.common.ScheduleCar
+import com.yunguchang.model.common.Schedule
+import com.yunguchang.model.common.ScheduleStatus
+import org.joda.time.DateTime
+import org.kie.api.time.SessionClock
+import com.yunguchang.gps.Const
+import function com.yunguchang.gps.GpsUtil.getDistance
+import function com.yunguchang.alarm.RulesUtil.debug;
+import function com.yunguchang.alarm.RulesUtil.info;
+import function com.yunguchang.alarm.RulesUtil.isSameDay;
+
+import function com.yunguchang.alarm.RulesUtil.isInSchedule;
+import function com.yunguchang.alarm.RulesUtil.now;
+global javax.enterprise.event.Event alarmEventSource
+global javax.enterprise.event.Event clearAlarmEventSource
+global com.yunguchang.alarm.RuleBridge ruleBridge
+
+dialect  "mvel"
+
+declare GpsPoint
+    @role( event )
+    @timestamp(sampleTime.millis)
+    @expires( 12h )
+
+end
+
+declare AlarmEvent
+    @role( event )
+    @timestamp(start.millis)
+end
+
+declare ScheduleCar
+    @role( event )
+    @timestamp(start)
+    @duration(duration)
+end
+
+declare CheckReturnLaterEvent
+    id: String
+end
+
+rule "debug single gpspoint"
+when
+    $car:Car($carId:id, carState!=CarState.REPAIRING, depot!=null)
+
+    $gpsPoint: GpsPoint(car.id==$carId)
+then
+    info(drools,$gpsPoint.toString()+" "+$car.toString()+" "+ getDistance($gpsPoint.lat,$gpsPoint.lng,$car.depot.lat,$car.depot.lng))
+
+end
+
+
+
+rule "fire no schedule when no schedule finish time is after current time and far away from depot"
+    no-loop true
+    when
+
+    $car:Car($carId:id, carState!=CarState.REPAIRING, depot!=null)
+    $points:List( size >0 )
+                            from collect( GpsPoint(car.id==$carId, speed > 0) over window:time( 2m ) )
+    not ( GpsPoint(eval(getDistance(lat,lng,$car.depot.lat,$car.depot.lng)<Const.DISTANCE_TO_DEPOT)) from $points)
+    $lastPoint : GpsPoint() from $points.get($points.size-1)
+    List(size==0) from collect ( ScheduleCar((this after $lastPoint || $lastPoint during this),car.id==$carId,status==ScheduleStatus.AWAITING))
+    List(size==0) from collect ( AlarmEvent(car.id==$carId,alarm==Alarm.NOSCHEDULE,end==null))
+
+    then
+        with (alarmEvent = new AlarmEvent()) {
+               alarm = Alarm.NOSCHEDULE,
+               car = $car,
+               start = $lastPoint.sampleTime,
+               gpsPoint = $lastPoint
+            };
+        insert(alarmEvent);
+        alarmEventSource.fire(alarmEvent);
+        info(drools,alarmEvent)
+
+end
+
+rule "fire go out early when car far away from depot and no schedue in 30 min"
+    no-loop true
+    when
+        $car:Car($carId:id, carState!=CarState.REPAIRING, depot!=null)
+        $points:List( size >0 )
+                                       from collect( GpsPoint(car.id==$carId, speed > 0) over window:time( 2m ) )
+        not GpsPoint(getDistance(lat,lng,$car.depot.lat,$car.depot.lng)<com.yunguchang.gps.Const.DISTANCE_TO_DEPOT) from $points
+        $lastPoint : GpsPoint() from $points.get($points.size-1)
+        $scheduleCars:List(size > 0)
+                                                from collect ( ScheduleCar(this after $lastPoint,car.id==$carId,status==ScheduleStatus.AWAITING))
+        not ScheduleCar( $lastPoint during this,car.id==$carId )
+        $firstScheduleCar: ScheduleCar($lastPoint before[30m] this) from $scheduleCars
+        not ScheduleCar(this before $firstScheduleCar) from $scheduleCars
+        not AlarmEvent(car.id==$carId,alarm==Alarm.GO_OUT_EARLY)
+    then
+        with (alarmEvent = new AlarmEvent()) {
+               alarm = Alarm.GO_OUT_EARLY,
+               car = $car,
+               start = $lastPoint.sampleTime,
+               end = $lastPoint.sampleTime,
+               gpsPoint = $lastPoint
+            };
+        insert(alarmEvent);
+        alarmEventSource.fire(alarmEvent);
+        info(drools,alarmEvent)
+end
+//
+
+rule "prepare car not go back timer"
+    no-loop true
+       timer( 0;start=$scheduleEndTime+30*60*1000)
+    when
+        $scheduleCar:ScheduleCar($scheduleEndTime:schedule.end.millis)
+
+    then
+        with (checkReturnLaterEvent = new CheckReturnLaterEvent()) {
+                   id = $scheduleCar.id
+                };
+        insert(checkReturnLaterEvent);
+
+end
+rule "fire car not go back after schedule finish within 30 min"
+    no-loop true
+    when
+        $car:Car($carId:id, carState!=CarState.REPAIRING, depot!=null)
+        CheckReturnLaterEvent($scheduleCarIdId:id,id!=null)
+        $scheduleCar:ScheduleCar(id==$scheduleCarIdId, $scheduleEndTime:schedule.end.millis,car.id==$carId,(status==ScheduleStatus.AWAITING || status==ScheduleStatus.FINISHED))
+        List(size==0) from collect (
+                    ScheduleCar(
+                        this!=$scheduleCar,this.car.id==$carId,
+                        ($scheduleCar before[0,30m] this || $scheduleCar overlaps this ||$scheduleCar during this  ),
+                        (status==ScheduleStatus.AWAITING)
+                    )
+                )
+
+        eval (! ruleBridge.isInDepot($carId,com.yunguchang.gps.Const.DISTANCE_TO_DEPOT) )
+
+    then
+
+        with (alarmEvent = new AlarmEvent()) {
+                       alarm = Alarm.COME_BACK_LATE,
+                       car = $car,
+                       start = now(),
+                       end =now(),
+                       gpsPoint = ruleBridge.getLastPoint($carId)
+                    };
+        alarmEventSource.fire(alarmEvent);
+        info(drools,alarmEvent)
+end
+

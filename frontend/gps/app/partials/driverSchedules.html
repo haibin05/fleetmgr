@@ -1,0 +1,60 @@
+<h4 class="search-header"><a ng-href="#drivers"><i class="icon-back"></i> {{driver.name}}</a></h4>
+
+<div class="" style="width:100%;">
+    <form class="form-horizontal clearfix">
+        <div style="float:left;width:240px;">
+            <div class="clearfix" style="width:100%">
+                <label class="pull-left" style="width:84px;line-height:63px;padding-left:10px;">日&#160;&#160;&#160;&#160;&#160;&#160;期:</label>
+
+                <div class="pull-left" style="width:136px;">
+                    <p class="input-group">
+                        <input type="text" name="beginDate" class="form-control span3" datepicker-popup="yyyy-MM-dd"
+                               ng-change="dirty=true"
+                               ng-model="params.day" is-open="status.opened" ng-required="true"
+                               current-text="今天" clear-text="清除" close-text="关闭"/>
+                    <span class="input-group-btn">
+                      <span class="btn btn-default" ng-click="openCalendar($event)"><i class="icon-calendar"></i></span>
+                    </span>
+                    </p>
+                </div>
+            </div>
+            <div class="clearfix" style="width:100%;">
+                <label class="pull-left" style="width:84px;line-height:40px;padding-left:10px;">起止时间:</label>
+
+                <div class="pull-left" style="width:65px;">
+                    <input type="text" ng-model="params.startTime" ng-pattern="/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/"
+                           placeholder="00:00" style="width:60px;height:32px;font-size:11px;" required=""/>
+                </div>
+                <div class="pull-left" style="width:6px;line-height:30px;">-</div>
+                <div class="pull-left" style="width:65px;">
+                    <input type="text" ng-model="params.endTime" ng-pattern="/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/"
+                           placeholder="00:00" style="width:60px;height:32px;font-size:11px;" required=""/>
+                </div>
+            </div>
+        </div>
+        <div style="float:left;width:46px;height:100%;">
+            <button class="btn btn-default search-btn" ng-click="doSearch()"><span>搜索</span></button>
+        </div>
+    </form>
+</div>
+
+<h5 style="padding:10px;">任务安排</h5>
+<div class="list-group result-list">
+    <div class="media list-group-item" ng-repeat="sch in schedules" ng-click="drawWay(sch, $index)">
+        <div class="media-left">
+            <img class="media-object" ng-src="{{driverStatusMap[driver.driverStatus].icon}}" alt="{{driverStatusMap[driver.driverStatus].name}}">
+        </div>
+        <div class="media-body">
+            <h4 class="media-heading">
+                {{sch.start | date:"MM/dd HH:mm"}} - {{sch.end | date:"MM/dd HH:mm"}}
+                <span class="tag {{driverStatusMap[driver.driverStatus].cls}}">{{driverStatusMap[driver.driverStatus].name}}</span>
+            </h4>
+
+            <p>目的地：{{sch.wayPoint}}</p>
+        </div>
+    </div>
+</div>
+
+<p  class="empty-msg" ng-if="schedules.length < 1">
+    无任务
+</p>

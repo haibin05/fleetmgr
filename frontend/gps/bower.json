@@ -1,0 +1,26 @@
+{
+  "name": "yogulpangular",
+  "version": "1.0.0",
+  "dependencies": {
+    "angular": "1.4.8",
+    "angular-bootstrap": "~0.13.4",
+    "angular-cookies": "1.4.8",
+    "angular-loading-bar": "~0.8.0",
+    "angular-resource": "1.4.8",
+    "angular-route": "1.4.8",
+    "angular-sanitize": "1.4.8",
+    "angular-i18n": "~1.4.8",
+    "bootstrap-sass-official": "3.3.5",
+    "jquery": "~2.1.1",
+    "modernizr": "2.8.x",
+    "restangular": "1.5.1",
+    "lodash": "3.10.1",
+    "angular-moment": "~0.10.3"
+  },
+  "devDependencies": {
+    "angular-mocks": "1.4.8"
+  },
+  "resolutions": {
+    "angular": "1.4.8"
+  }
+}

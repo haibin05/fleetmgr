@@ -1,0 +1,60 @@
+<h4 style="padding:10px;">车辆报警消息</h4>
+
+<div class="map-top-bar">
+    <a ng-href="{{export()}}" target="_blank" class="map-bar-btn"><i class="icon-export"></i></a>
+</div>
+
+<div style="width:100%;">
+    <form class="form-horizontal clearfix">
+        <div style="float:left;width:230px;">
+            <div class="clearfix" style="width:100%">
+                <label class="pull-left" style="width:84px;line-height:63px;padding-left:10px;">日&#160;&#160;&#160;&#160;&#160;&#160;期:</label>
+                <div class="pull-left" style="width:136px;">
+                    <p class="input-group">
+                        <input type="text" name="beginDate" class="form-control span3" datepicker-popup="yyyy-MM-dd" ng-change="dirty=true"
+                               ng-model="params.day" is-open="status.opened" ng-required="true"
+                               current-text="今天" clear-text="清除" close-text="关闭"/>
+                    <span class="input-group-btn">
+                      <span class="btn btn-default" ng-click="openCalendar($event)"><i class="icon-calendar"></i></span>
+                    </span>
+                    </p>
+                </div>
+            </div>
+            <div class="clearfix" style="width:100%;">
+                <label class="pull-left" style="width:84px;line-height:40px;padding-left:10px;">起止时间:</label>
+                <div class="pull-left" style="width:65px;">
+                    <input type="text" ng-model="params.startTime" ng-pattern="/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/"
+                           placeholder="00:00" style="width:60px;height:32px;font-size:11px;" required=""/>
+                </div>
+                <div class="pull-left" style="width:6px;line-height:30px;">-</div>
+                <div class="pull-left" style="width:65px;">
+                    <input type="text" ng-model="params.endTime" ng-pattern="/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/"
+                           placeholder="00:00" style="width:60px;height:32px;font-size:11px;" required=""/>
+                </div>
+            </div>
+        </div>
+        <div style="float:left;width:46px;height:100%;">
+            <button class="btn btn-default search-btn" ng-click="doSearch()"><span>搜索</span></button>
+        </div>
+    </form>
+</div>
+
+<div alarm-type-picker ng-model="params" style="margin-top:10px;"></div>
+
+<div class="list-group result-list">
+    <div class="media list-group-item" ng-repeat="alarm in alarms" ng-click="showAlarmDetail(alarm, $index)" ng-class="{'active': selectedIndex === $index}">
+        <div class="media-left">
+            <i class="media-object icon-bubble" ng-class="{'gray': alarm.visited}"></i>
+        </div>
+        <div class="media-body">
+            <h4 class="media-heading clearfix">
+                <span class="pull-left">{{alarmTypes[alarm.alarm]}}</span>
+                <span class="pull-right">{{alarm.start | date:"HH:mm"}}</span>
+            </h4>
+            <p>{{alarm.car.badge}}</p>
+        </div>
+    </div>
+</div>
+<p  class="empty-msg" ng-if="alarms.length < 1">
+    当前无报警消息
+</p>

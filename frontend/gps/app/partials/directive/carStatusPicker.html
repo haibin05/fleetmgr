@@ -1,0 +1,46 @@
+
+<button type="button" class="btn btn-link picker-toggle">
+    全部
+    <span class="caret"></span>
+</button>
+<span ng-repeat="(k, v) in gpsInstalled" class="value-item">
+    {{k}}<span ng-click="clearGpsInstalled()" class="close">&times;</span>
+</span>
+<span ng-repeat="(k, v) in state" class="value-item">
+    {{k}}<span ng-click="clearState()" class="close">&times;</span>
+</span>
+<span ng-repeat="(k, v) in moving" class="value-item">
+    {{k}}<span ng-click="clearMoving()" class="close">&times;</span>
+</span>
+<span ng-repeat="(k, v) in fleet" class="value-item">
+    {{k}}<span ng-click="clearFleet()" class="close">&times;</span>
+</span>
+<div class="picker-menu">
+    <div class="gps-list">
+        <div class="list-label">GPS:</div>
+        <div class="list-content">
+            <span class="option-item" data-value="true" ng-click="toggleGpsInstalled('true','众业GPS车辆')" ng-class="{'active': value.gpsInstalled == 'true'}">众业GPS车辆</span>
+            <span class="option-item" data-value="false" ng-click="toggleGpsInstalled('false','其他车辆')" ng-class="{'active': value.gpsInstalled == 'false'}">其他车辆</span>
+        </div>
+    </div>
+    <div class="state-list">
+        <div class="list-label">车辆状态:</div>
+        <div class="list-content">
+            <span class="option-item" data-value="{{k}}" ng-click="toggleState(opt.value, opt.name)" ng-repeat="opt in carStatusOpts" ng-class="{'active': value.state == opt.value}">{{opt.name}}</span>
+        </div>
+    </div>
+    <div class="moving-list">
+        <div class="list-label">行驶状态:</div>
+        <div class="list-content">
+            <span class="option-item" data-value="1" ng-click="toggleMoving('1','行车')" ng-class="{'active': value.moving == '1'}">行车</span>
+            <span class="option-item" data-value="2" ng-click="toggleMoving('2','停车')" ng-class="{'active': value.moving == '2'}">停车</span>
+            <span class="option-item" data-value='3' ng-click="toggleMoving('3','离线')" ng-class="{'active': value.moving == '3'}">离线</span>
+        </div>
+    </div>
+    <div class="fleet-list">
+        <div class="list-label">车队选择:</div>
+        <div class="list-content">
+            <span class="option-item" data-value="true" ng-repeat="f in fleets" ng-click="toggleFleet(f.id, f.name)" ng-class="{'active': value.fleetId == f.id}">{{f.name}}</span>
+        </div>
+    </div>
+</div>

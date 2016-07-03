@@ -1,0 +1,82 @@
+package com.yunguchang.rules
+
+import com.yunguchang.model.common.GpsPoint
+import com.yunguchang.model.common.Car
+import java.util.List
+import com.yunguchang.model.common.AlarmEvent
+import com.yunguchang.model.common.Alarm
+import org.joda.time.DateTime
+
+global javax.enterprise.event.Event alarmEventSource
+global javax.enterprise.event.Event clearAlarmEventSource
+
+import function com.yunguchang.alarm.RulesUtil.debug;
+import function com.yunguchang.alarm.RulesUtil.info;
+
+
+dialect "mvel"
+
+
+
+declare GpsPoint
+    @role( event )
+    @timestamp(sampleTime.millis)
+    @expires( 12h )
+end
+
+
+declare AlarmEvent
+    @role( event )
+    @timestamp(start.millis)
+end
+
+
+rule "fire speeding alarm"
+    no-loop  true
+when
+    $car:Car($carId:id)
+    $points : List( size >3 )
+                      from collect( GpsPoint(car.id==$carId) over window:time( 2m ) )
+    not ( GpsPoint( car.id==$carId , speed<120 ) from $points)
+    $lastPoint : GpsPoint(car.id==$carId, speed > 0 ) from $points.get($points.size-1)
+    List(size == 0) from collect ( AlarmEvent(car.id==$carId,alarm==Alarm.SPEEDING, end==null))
+then
+    with (alarmEvent = new AlarmEvent()) {
+       alarm = Alarm.SPEEDING,
+       car = $car,
+       start = $lastPoint.sampleTime,
+       gpsPoint = $lastPoint
+    };
+
+    insert(alarmEvent);
+    alarmEventSource.fire(alarmEvent);
+    info(drools,alarmEvent)
+
+end
+
+
+
+rule "clear speeding alarm when speed is normal or no gps point in 1 min"
+when
+    $car:Car($carId:id)
+    $alarmEvent: AlarmEvent(car.id==$carId,alarm==Alarm.SPEEDING, end==null)
+    $point:GpsPoint(car.id==$carId, this after $alarmEvent)
+    (
+       not ( GpsPoint(car.id==$carId,this!= $point,this after [ 1s, 1m ] $point ))
+            or
+       not ( GpsPoint(car.id==$carId, speed>120, this!= $point, this after [ 1s, 1m ] $point))
+    )
+
+then
+
+    $alarmEvent.end=new DateTime(drools.getWorkingMemory().getSessionClock().getCurrentTime());
+    update($alarmEvent)
+    clearAlarmEventSource.fire($alarmEvent);
+    info(drools,$alarmEvent)
+
+end
+
+
+
+
+

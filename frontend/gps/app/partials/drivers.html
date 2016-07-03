@@ -1,0 +1,34 @@
+<div class="top-search">
+    <div class="input-group">
+        <input type="text" class="form-control" placeholder="请输入您要搜索的驾驶员相关信息" ng-model="params.keyword"
+               ng-keydown="searchKeyDown($event)" style="font-size: 12px">
+      <span class="input-group-btn">
+        <button class="btn btn-default" type="button" ng-click="doSearch()">搜索</button>
+      </span>
+    </div>
+</div>
+<div driver-status-picker ng-model="params" fleets="fleets"></div>
+
+<div class="list-group result-list">
+    <div class="media list-group-item" ng-repeat="driver in drivers">
+        <a ng-href="" ui-sref="" ng-click="driverStatus(driver)">
+            <div class="media-left">
+                <img class="media-object" ng-src="{{driverStatusMap[driver.driverStatus].icon}}" alt="{{driverStatusMap[driver.driverStatus].name}}">
+            </div>
+            <div class="media-body">
+                <h4 class="media-heading">
+                    {{driver.name}}
+                    <span class="tag {{driverStatusMap[driver.driverStatus].cls}}">{{driverStatusMap[driver.driverStatus].name}}</span>
+                </h4>
+
+                <p>{{driver.mobile}}<span ng-show="driver.mobile">&nbsp;|&nbsp;</span> 驾照类型&nbsp;{{driver.licenseClass?driver.licenseClass:'无'}}</p>
+            </div>
+        </a>
+    </div>
+</div>
+
+<p  class="empty-msg" ng-if="drivers.length < 1">
+    没有找到符合条件的驾驶员
+</p>
+
+

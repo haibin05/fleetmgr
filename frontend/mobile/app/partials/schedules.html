@@ -1,0 +1,33 @@
+<div class="scrollable">
+    <div class="scrollable-content section"  ui-scroll-bottom="loadMore()">
+        <div class="list-group">
+            <div class="list-group-item" style="border:1px solid #2ea9df;" ng-repeat="r in schedules">
+                <a ng-href=""></a>
+                <h5 class="clearfix" style="border-bottom:1px solid #2ea9df;margin:0 -15px;color:#2ea9df;padding:0 30px;line-height:38px;">
+                    <span class="pull-left">调度派单</span>
+                    <span class="pull-right"></span>
+                </h5>
+                <div style="padding:15px;">
+                    <p><span class="address-badge from">起</span> {{r.startPoint}}</p>
+                    <p style="padding-left:24px;">{{r.start | date: 'MM月dd日 HH:mm'}}</p>
+                    <p><span class="address-badge to">终</span> {{r.wayPoint}}</p>
+                    <p style="padding-left:24px;">{{r.end | date: 'MM月dd日 HH:mm'}}</p>
+                    <div class="list-group-item" ng-repeat="sc in r.scheduleCars">
+                        <div class="clearfix" style="padding:15px;">
+                            <p>车　辆{{$index + 1}} : {{sc.car.badge}}</p>
+                            <p>驾驶员{{$index + 1}} : {{sc.driver.name}}</p>
+                            <p>
+                                <a class="btn btn-default pull-right m-r-10" style="margin-top:20px;" ng-href="#scheduleCars/{{sc.id}}/record">查看详情</a>
+                                <a class="btn btn-default pull-right m-r-10" style="margin-top:20px;" ng-href="#scheduleCars/{{sc.id}}/record/end">回厂</a>
+                                <a class="btn btn-default pull-right m-r-10" style="margin-top:20px;" ng-href="#scheduleCars/{{sc.id}}/record/start">出厂</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div ng-show="loading" class="app-content-loading text-center">
+            <i class="fa fa-spinner fa-spin loading-spinner"></i>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,41 @@
+<div class="scrollable">
+    <div class="scrollable-content section" ng-show="!done">
+
+        <form role="form" name="applyRateForm">
+            <fieldset>
+                <h5 class="text-center">用车人评价</h5>
+
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" ng-model="rate.regularApplication" ng-disabled="finished">
+                        用车申请符合规范
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" ng-model="rate.regularBookingTime" ng-disabled="finished">
+                        用车时间符合规范
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" ng-model="rate.regularRoute" ng-disabled="finished">
+                        用车路线符合规范
+                    </label>
+                </div>
+
+            </fieldset>
+        </form>
+        <div class="bottom-btn-group">
+            <button class="btn btn-primary btn-block" ng-if="!finished" ng-disabled="applyRateForm.$invalid || processing" ng-click="submit()">提交</button>
+            <button class="btn btn-primary btn-block" ng-if="finished" ng-click="close()">确定</button>
+        </div>
+    </div>
+
+    <div class="scrollable-content section" ng-show="done">
+        <p style="text-align: center;padding:100px 0;">您的评价已提交成功！</p>
+        <a class="btn btn-primary btn-block" style="margin-top:80px;" ng-click="close()">确定</a>
+    </div>
+</div>

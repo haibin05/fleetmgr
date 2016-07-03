@@ -1,0 +1,68 @@
+<div class="top-search">
+    <div class="input-group">
+        <input type="text" class="form-control" placeholder="请输入您要搜索的车队相关信息" ng-model="params.keyword"
+               ng-keydown="searchKeyDown($event)" style="font-size: 12px">
+      <span class="input-group-btn">
+        <button class="btn btn-default" type="button" ng-click="doSearch()">搜索</button>
+      </span>
+    </div>
+</div>
+
+<div parking-fleet-picker ng-model="params" fleets="fleets"></div>
+
+<div class="list-group result-list">
+    <div class="media list-group-item" ng-repeat="car in cars"
+         ng-init="hover = false"
+         ng-mouseenter="hover=true"
+         ng-mouseleave="hover=false"
+         ng-click="getCarPosition(car,$index)"
+         ng-class="{'active':selectedIndex === $index}"
+            >
+        <div class="media-left">
+            <div ng-switch="car.carState">
+                <div ng-switch-when="INUSE">
+                    <img class="media-object" src="images/driver_busy_64x64.png" alt="出车">
+                </div>
+                <div ng-switch-when="IDLE">
+                    <img class="media-object" src="images/driver_idle_64x64.png" alt="待命">
+                </div>
+                <div ng-switch-default>
+                    <img class="media-object" src="images/driver_leave_64x64.png" alt="请假">
+                </div>
+            </div>
+        </div>
+        <div class="media-body">
+            <h4 class="media-heading">
+                {{car.badge}}
+                <button ng-if="hover" class="btn btn-default btn-xs pull-right" ng-click="showSetting($event, car)"
+                        >{{car.depot ? '修改':'设置'}}
+                </button>
+            </h4>
+            <div ng-switch="car.depot">
+                <p ng-switch-when="null" style="color: #2ea9df;">未设置停车场</p>
+                <p ng-switch-default>停车地址:{{car.depot.name}}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div ng-show="setting" class='map_panel panel-left '>
+    <div class='panel-heading'>停车场设置</div>
+    <div class='panel-body'>
+        <div class='form-group'>
+            <label for='' class='pull-left' style='width: 20%;padding: 6px 0px;margin: 0 auto;'>停车场</label>
+            <input type='text' id='suggestId' class='form-control pull-left' ng-model='newCar.depot.name'
+                   placeholder='请选择停车场地址'
+                   style='width: 80%;' ng-keydown='searchAddressKeyDown($event)'/>
+
+            <div id='searchResultPanel' style='border:1px solid #C0C0C0;width:150px;height:auto; display:none; '>
+
+            </div>
+        </div>
+        <div class='form-group' style='text-align: center'>
+            <button class='btn btn-info' style='margin-top:15px;' ng-click='setFleetParking()'>确定</button>
+            &nbsp;&nbsp;
+            <button class='btn btn-warning' style='margin-top:15px;' ng-click='cancelSetting()'>取消</button>
+        </div>
+    </div>
+</div>

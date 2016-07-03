@@ -1,0 +1,69 @@
+<div class="scrollable">
+    <div class="scrollable-content section" ng-show="!done">
+
+        <form role="form" name="scheduleForm">
+            <h5 style="background: #f7f7f7;height:42px;margin:0 -15px;line-height: 42px;padding:0 15px;">当前用车申请</h5>
+            <div style="margin-bottom:0;">
+                <div ng-repeat="p in applyList">
+                    <h5 class="clearfix" style="height:42px;line-height: 42px;border-bottom: 1px solid #d6d6d6;">
+                        <i class="pull-left m-icon m-icon-delete" ng-class="{'m-icon-delete-gray': p.id == application.id}"
+                           ng-if="applyList.length != 1" style="margin-top:5px;" ng-click="removeApplication(p.id)"></i>
+                        <span class="pull-left m-l-10">{{p.passenger.userName}}（<span ng-class="{'text-error': isOutOfCapacity()}">共{{p.passengers}}人</span>）</span>
+                        <span class="pull-right">{{p.passenger.mobile}}</span>
+                    </h5>
+                    <div>
+                        <p style="line-height: 23px;"><i class="m-icon m-icon-origin m-r-10" style="position:relative;top:7px;"></i> {{p.origin}}</p>
+                        <p style="padding-left:33px;line-height: 23px;">{{p.start | date: 'MM月dd日 HH:mm'}}</p>
+                        <p style="line-height: 23px;"><i class="m-icon m-icon-destination m-r-10" style="position:relative;top:7px;"></i>{{p.destination}}</p>
+                        <p style="padding-left:33px;line-height: 23px;">{{p.end | date: 'MM月dd日 HH:mm'}}</p>
+                    </div>
+                    <div class="h-divider"></div>
+                </div>
+            </div>
+            <div application-picker ng-model="applyList" ng-hide="scheduleCars.length > 1"></div>
+
+            <h5 style="background: #f7f7f7;height:42px;margin:0 -15px;line-height: 42px;padding:0 15px;">驾驶员车辆选择</h5>
+            <div ng-repeat="p in scheduleCars track by $index">
+                <h5 class="clearfix" style="height:42px;line-height: 42px;border-bottom: 1px solid #d6d6d6;vertical-align: middle;" ng-show="!update || scheduleCars.length > 1">
+                    <i class="pull-left m-icon m-icon-delete" ng-class="{'m-icon-delete-gray': index == 1}" style="margin-top:5px;" ng-click="removeScheduleCar($index)"></i>
+                </h5>
+                <div class="form-group clearfix">
+                    <i class="m-icon m-icon-car pull-left" style="position:relative;top:12px;"></i>
+                    <car-picker apply-id="application.id" ng-model="p.car" class="pull-left"  ng-class="{'text-error': isOutOfCapacity()}"
+                                ng-change="setDefaultDriver(car, $index)" before-change="checkCar(car)"></car-picker>
+                    <span class="pull-right" ng-show="!!p.car" ng-class="{'text-error': isOutOfCapacity()}">
+                        <i class="fa fa-exclamation-triangle" ng-show="isOutOfCapacity()"></i>
+                        限载{{p.car.capacity}}人
+                    </span>
+                </div>
+                <div class="form-group clearfix" >
+                    <i class="m-icon m-icon-driver pull-left" style="position:relative;top:12px;"></i>
+                    <driver-picker apply-id="application.id" car-id="p.car.id" ng-model="p.driver" class="pull-left"
+                                   before-change="checkDriver(driver)"></driver-picker>
+                </div>
+                <div class="h-divider"></div>
+            </div>
+
+            <button class="btn btn-link" ng-click="addScheduleCar()" ng-hide="(applyList.length > 1) || !!update">
+                <i class="m-icon m-icon-add"  style="position:relative;top:6px;left:-12px;"></i>添加车辆驾驶员
+            </button>
+
+        </form>
+        <div class="bottom-btn-group" ng-if="!update">
+            <button class="btn btn-primary btn-block" ng-disabled="scheduleForm.$invalid || processing" ng-click="addSchedule()">确定</button>
+        </div>
+        <div class="row bottom-btn-group" ng-if="update">
+            <div class="col-xs-6">
+                <button class="btn btn-primary btn-block" confirm="确认修改调度单?" confirm-action="updateSchedule()" ng-disabled="scheduleForm.$invalid || processing">提交修改</button>
+            </div>
+            <div class="col-xs-6">
+                <button class="btn btn-default btn-block" ng-click="close()">取消修改</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="scrollable-content section" ng-show="done">
+        <p style="text-align: center;padding:100px 0;">您已派单成功！</p>
+        <a class="btn btn-primary btn-block" style="margin-top:80px;" ng-click="close()">确定</a>
+    </div>
+</div>

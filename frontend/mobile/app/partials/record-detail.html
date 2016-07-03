@@ -1,0 +1,62 @@
+<div class="scrollable">
+    <div class="scrollable-content section">
+
+        <form role="form"  name="recordForm">
+
+            <div class="form-group label4">
+                <label class="col-xs-2 control-label">车牌号</label>
+                <span class="form-control col-xs-10">{{scheduleCar.car.badge}}</span>
+            </div>
+
+            <div class="form-group label4">
+                <label class="col-xs-2 control-label">出厂时间</label>
+                <span class="form-control col-xs-10">{{record.start | date: 'MM月dd日 HH:mm'}}</span>
+            </div>
+
+            <div class="form-group label4">
+                <label class="col-xs-2 control-label">回厂时间</label>
+                <span class="form-control col-xs-10">{{record.end | date: 'MM月dd日 HH:mm'}}</span>
+            </div>
+
+            <div class="form-group label4">
+                <label class="col-xs-2 control-label">开始里程</label>
+                <span class="form-control col-xs-10">{{record.startMile}}</span>
+            </div>
+
+            <div class="form-group label4">
+                <label class="col-xs-2 control-label">结束里程</label>
+                <span class="form-control col-xs-10">{{record.endMile}}</span>
+            </div>
+
+            <div class="h-divider"></div>
+
+            <div class="form-group label4">
+                <label class="col-xs-2 control-label">出境费</label>
+                <span class="form-control col-xs-10">{{record.transport}}</span>
+            </div>
+            <div class="form-group label4">
+                <label class="col-xs-2 control-label">停车费</label>
+                <span class="form-control col-xs-10">{{record.parking}}</span>
+            </div>
+            <div class="form-group label4">
+                <label class="col-xs-2 control-label">住宿费</label>
+                <span class="form-control col-xs-10">{{record.lodging}}</span>
+            </div>
+            <div class="form-group label4">
+                <label class="col-xs-2 control-label">加油费</label>
+                <span class="form-control col-xs-10">{{record.fuel}}</span>
+            </div>
+            <div class="form-group label4">
+                <label class="col-xs-2 control-label">总费用</label>
+                <span class="form-control col-xs-10">￥{{record.transport + record.parking + record.lodging + record.fuel}}</span>
+            </div>
+            <div class="form-group label4">
+                <label class="col-xs-2 control-label">备注</label>
+                <span class="form-control col-xs-10">{{!record.comment ? '无' : record.comment}}</span>
+            </div>
+        </form>
+        <div class="bottom-btn-group">
+            <button class="btn btn-primary btn-block" ng-href="#applications/{{application.id}}/rate">立即评价</button>
+        </div>
+    </div>
+</div>

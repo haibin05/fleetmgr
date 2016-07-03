@@ -1,0 +1,88 @@
+import com.yunguchang.model.common.GpsPoint
+import com.yunguchang.model.common.Car
+import java.util.List
+import com.yunguchang.model.common.AlarmEvent
+import com.yunguchang.model.common.Alarm
+import com.yunguchang.model.common.ScheduleCar
+import com.yunguchang.model.common.Schedule
+import org.joda.time.DateTime
+import com.yunguchang.gps.Const
+
+
+global javax.enterprise.event.Event alarmEventSource
+global javax.enterprise.event.Event alarmClearEventSource
+
+
+
+import function com.yunguchang.alarm.RulesUtil.debug;
+import function com.yunguchang.alarm.RulesUtil.info;
+
+
+dialect  "mvel"
+
+declare GpsPoint
+    @role( event )
+    @timestamp(sampleTime.millis)
+    @expires( 12h )
+end
+
+
+
+
+
+declare AlarmEvent
+    @role( event )
+    @timestamp(start.millis)
+end
+
+
+
+
+
+
+rule "clear alarm no more gps points in 20 min"
+when
+    $car:Car($carId:id)
+    $alarmEvent: AlarmEvent(car.id==$carId,end==null)
+    (
+            eval($alarmEvent.alarm==Alarm.SPEEDING)
+                or
+            eval($alarmEvent.alarm==Alarm.TIRED)
+
+
+    )
+    $point:GpsPoint(car.id==$carId, this after[0] $alarmEvent)
+    not GpsPoint(car.id==$carId,this!= $point,this after [ 1s, 20m ] $point )
+then
+    $alarmEvent.end=new DateTime(drools.getWorkingMemory().getSessionClock().getCurrentTime());
+    update($alarmEvent)
+    clearAlarmEventSource.fire($alarmEvent);
+    info(drools,$alarmEvent)
+end
+
+rule "clear some alarm when car return depot"
+when
+     $car:Car($carId:id,depot!=null)
+     $alarmEvent: AlarmEvent(car.id==$carId,end==null)
+     (
+        eval($alarmEvent.alarm==Alarm.NOSCHEDULE)
+            or
+        eval($alarmEvent.alarm==Alarm.LICENSE_MISMATCH)
+            or
+        eval($alarmEvent.alarm==Alarm.VIOLATION)
+            or
+        eval($alarmEvent.alarm==Alarm.GO_OUT_EARLY)
+
+     )
+
+     $points:List( size >0 )
+                                     from collect( GpsPoint(car.id==$carId) over window:time( 5m ) )
+
+     not ( GpsPoint(eval(getDistance(lat,lng,$car.depot.lat,$car.depot.lng)>com.yunguchang.gps.Const.DISTANCE_TO_DEPOT)) from $points)
+
+then
+    $alarmEvent.end=new DateTime(drools.getWorkingMemory().getSessionClock().getCurrentTime());
+    update($alarmEvent)
+    clearAlarmEventSource.fire($alarmEvent);
+    info(drools,$alarmEvent)
+end

@@ -1,0 +1,1 @@
+./jboss-cli.sh --file=fleet.cli

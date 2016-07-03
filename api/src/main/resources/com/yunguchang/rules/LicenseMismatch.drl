@@ -1,0 +1,98 @@
+import com.yunguchang.model.common.GpsPoint
+import com.yunguchang.model.common.Car
+import java.util.List
+import com.yunguchang.model.common.AlarmEvent
+import com.yunguchang.model.common.Alarm
+import com.yunguchang.model.common.ScheduleCar
+import com.yunguchang.model.common.Schedule
+import com.yunguchang.model.common.LicenseVehicleMapping;
+import org.joda.time.DateTime
+import com.yunguchang.gps.Const
+
+import function com.yunguchang.gps.GpsUtil.getDistance
+import function com.yunguchang.alarm.RulesUtil.debug;
+import function com.yunguchang.alarm.RulesUtil.info;
+
+global javax.enterprise.event.Event alarmEventSource
+global javax.enterprise.event.Event alarmClearEventSource
+dialect  "mvel"
+
+declare GpsPoint
+    @role( event )
+    @timestamp(sampleTime.millis)
+    @expires( 12h )
+end
+
+declare ScheduleCar
+    @role( event )
+    @timestamp(start)
+    @duration(duration)
+end
+
+
+
+declare AlarmEvent
+    @role( event )
+    @timestamp(start.millis)
+end
+
+
+rule "fire license mismatch driving when the scheduled car is mismatch the license and the car is far away from depot"
+    no-loop true
+    when
+        $car:Car($carId:id,depot!=null,licenseCarType!=null)
+        $points:List( size >0 )
+                                from collect( GpsPoint(car.id==$carId, speed > 0) over window:time( 2m ) )
+        not ( GpsPoint(eval(getDistance(lat,lng,$car.depot.lat,$car.depot.lng)<com.yunguchang.gps.Const.DISTANCE_TO_DEPOT)) from $points)
+        $lastPoint : GpsPoint() from $points.get($points.size-1)
+        $scheduleCar: ScheduleCar(car.id==$carId,driver!.internalLincenseClassCode!=null, $lastPoint during   this)
+        List(size==0) from collect ( LicenseVehicleMapping(licenseClass==$scheduleCar!.driver!.internalLincenseClassCode, vehicleType==$car.licenseCarType))
+        List(size==0) from collect ( AlarmEvent(car.id==$carId,alarm==Alarm.LICENSE_MISMATCH, end==null ))
+    then
+        with (alarmEvent = new AlarmEvent()) {
+               alarm = Alarm.LICENSE_MISMATCH,
+               car = $car,
+               start = $lastPoint.sampleTime,
+               gpsPoint = $lastPoint
+            };
+        insert(alarmEvent);
+        alarmEventSource.fire(alarmEvent);
+        info(drools,alarmEvent)
+
+end
+
+
+
+
+rule "clear license mismatch when schedule car is matched"
+    no-loop true
+when
+    $car:Car($carId:id, licenseCarType!=null)
+    $alarmEvent: AlarmEvent(car.id==$carId,alarm==Alarm.LICENSE_MISMATCH, end==null)
+    $scheduleCar: ScheduleCar(car.id==$carId,driver!.internalLincenseClassCode!=null)
+    $gpsPoint :GpsPoint(car.id==$carId, this during $scheduleCar, this after $alarmEvent)
+    exists LicenseVehicleMapping(licenseClass==$scheduleCar!.driver!.internalLincenseClassCode, vehicleType==$car.licenseCarType)
+
+then
+    $alarmEvent.end=new DateTime(drools.getWorkingMemory().getSessionClock().getCurrentTime());
+    update($alarmEvent)
+    clearAlarmEventSource.fire($alarmEvent);
+    info(drools,$alarmEvent)
+end
+
+
+rule "clear license mismatch when schedule is finished"
+    no-loop true
+when
+    $car:Car($carId:id)
+    $alarmEvent: AlarmEvent(car.id==$carId,alarm==Alarm.LICENSE_MISMATCH, end==null)
+    $gpsPoint:GpsPoint(car.id==$carId, this after $alarmEvent)
+    not ScheduleCar(car.id==$carId , $gpsPoint  during   this)
+
+then
+    $alarmEvent.end=new DateTime(drools.getWorkingMemory().getSessionClock().getCurrentTime());
+    update($alarmEvent)
+    clearAlarmEventSource.fire($alarmEvent);
+    info(drools,$alarmEvent)
+end
+

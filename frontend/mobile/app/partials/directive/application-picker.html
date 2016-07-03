@@ -1,0 +1,27 @@
+<button class="btn btn-link" ng-click="togglePicker()"><i class="m-icon m-icon-add"  style="position:relative;top:6px;left:-12px;"></i>添加用车申请</button>
+
+<div class="scrollable picker-popup" ng-class="{'open': active}">
+    <div class="scrollable-header search-wrapper">
+        <button class="btn btn-primary btn-block" ng-click="togglePicker()">确定</button>
+    </div>
+    <div class="scrollable-content" ui-scroll-bottom="loadMore()">
+        <div class="list-group">
+            <div class="list-group-item" ng-repeat="p in applys" ng-click="selectItem(p)">
+                <h5 class="clearfix" style="line-height: 23px;">
+                    <i class="pull-left m-icon m-icon-unchecked" ng-class="{'m-icon-checked': p.selected}"></i>
+                    <span class="pull-left m-l-10">{{p.passenger.userName}}</span>
+                    <span class="pull-right">{{p.passenger.mobile}}</span>
+                </h5>
+                <div>
+                    <p style="line-height: 23px;"><i class="m-icon m-icon-origin m-r-10" style="position:relative;top:7px;"></i> {{p.origin}}</p>
+                    <p style="padding-left:33px;line-height: 23px;">{{p.start | date: 'MM月dd日 HH:mm'}}</p>
+                    <p style="line-height: 23px;"><i class="m-icon m-icon-destination m-r-10" style="position:relative;top:7px;"></i>{{p.destination}}</p>
+                    <p style="padding-left:33px;line-height: 23px;">{{p.end | date: 'MM月dd日 HH:mm'}}</p>
+                </div>
+            </div>
+        </div>
+        <div ng-show="loading" class="app-content-loading text-center">
+            <i class="fa fa-spinner fa-spin loading-spinner"></i>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,44 @@
+{
+    "name": "angular-gulp-bower",
+    "version": "0.0.0",
+    "dependencies": {
+        "gulp-print": "^1.1.0"
+    },
+    "devDependencies": {
+        "browser-sync": "^2.9.1",
+        "gulp": "^3.9.0",
+        "gulp-autoprefixer": "^2.3.1",
+        "gulp-cache": "^0.3.0",
+        "gulp-clean": "^0.3.1",
+        "gulp-csso": "^1.0.0",
+        "gulp-filter": "^3.0.1",
+        "gulp-imagemin": "^2.3.0",
+        "gulp-jshint": "^1.11.2",
+        "gulp-load-plugins": "^1.0.0-rc.1",
+        "gulp-minify-html": "~1.0.4",
+        "gulp-ngmin": "^0.3.0",
+        "gulp-plumber": "^1.0.1",
+        "gulp-replace": "~0.5.4",
+        "gulp-rev": "^6.0.1",
+        "gulp-rev-replace": "^0.4.2",
+        "gulp-ruby-sass": "^1.4.0",
+        "gulp-size": "^2.0.0",
+        "gulp-uglify": "^1.4.0",
+        "gulp-useref": "^1.3.0",
+        "gulp-util": "^3.0.6",
+        "gulp-flatten" : "0.2.0",
+        "http-proxy": "~1.11.2",
+        "jshint-stylish": "^2.0.1",
+        "require-dir": "~0.3.0",
+        "tunnel": "git+https://github.com/koichik/node-tunnel.git#95e7b0c",
+        "uglify-save-license": "^0.4.1",
+        "wiredep": "^3.0.0-beta"
+    },
+    "engines": {
+        "node": ">=0.10.0"
+    },
+    "scripts": {
+        "prestart": "npm install & bower install",
+        "start": "gulp clean && gulp build && gulp serve"
+    }
+}

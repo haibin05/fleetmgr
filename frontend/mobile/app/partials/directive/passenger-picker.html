@@ -1,0 +1,21 @@
+<input type="text" ng-model="value.userName" class="form-control" placeholder="乘车人" ng-required="true" ng-click="togglePicker()" readonly>
+
+<div class="scrollable picker-popup" ng-class="{'open': active}">
+    <div class="scrollable-header search-wrapper">
+        <input type="search" class="form-control needsclick" style="width:100%;" ng-model="params.keyword" placeholder="请输入您要搜索的乘车人相关信息">
+        <span class="btn" style="position: absolute;top: 15px;right: 15px;" ng-click="active=false">关闭</span>
+    </div>
+
+    <div class="scrollable-content" ui-scroll-bottom="loadMore()">
+        <div class="list-group passenger-group" ng-repeat="(k, passengers) in passengerGroups" ng-show="passengers.length>0">
+            <h5 class="group-title">{{k}}</h5>
+            <div class="list-group-item" ng-repeat="p in passengers" ng-click="selectItem(p)">
+                <h5>{{p.userName}}</h5>
+                <p>{{p.mobile || '&#160;'}}</p>
+            </div>
+        </div>
+        <div ng-show="loading" class="app-content-loading text-center">
+            <i class="fa fa-spinner fa-spin loading-spinner"></i>
+        </div>
+    </div>
+</div>

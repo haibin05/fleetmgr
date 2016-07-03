@@ -1,0 +1,107 @@
+package com.yunguchang.rules
+
+import com.yunguchang.model.common.GpsPoint
+import com.yunguchang.model.common.Car
+import java.util.List
+import com.yunguchang.model.common.AlarmEvent
+import com.yunguchang.model.common.Alarm
+import org.joda.time.DateTime
+
+global javax.enterprise.event.Event alarmEventSource
+global javax.enterprise.event.Event alarmClearEventSource
+
+import function com.yunguchang.alarm.RulesUtil.debug;
+import function com.yunguchang.alarm.RulesUtil.info;
+
+dialect "mvel"
+
+declare GpsPoint
+    @role( event )
+    @timestamp(sampleTime.millis)
+    @expires( 12h )
+end
+
+
+
+declare StartMovingEvent
+    @role(event)
+    @timestamp(eventTime.millis)
+    car: Car
+    eventTime: DateTime
+end
+
+
+
+rule "fire start moving event when moving and speed is 0 or no gps points within 20 mins before"
+    no-loop true
+    salience 100
+when
+    $car:Car($carId:id)
+    $point:GpsPoint(speed > 0, car.id==$carId)
+    not ( StartMovingEvent(car.id==$carId, this after [0] $point))
+(
+    not ( GpsPoint(car.id==$carId,this before [ 1s, 20m ] $point ))
+        or
+    not ( GpsPoint(car.id==$carId,speed>0, this before [ 1s, 20m ] $point ))
+)
+then
+
+    with (startMovingEvent=new StartMovingEvent()){
+        car=$car,
+        eventTime=$point.sampleTime
+    }
+    insert(startMovingEvent)
+    info(drools,startMovingEvent);
+
+end
+
+rule "only keep the latest StartMovingEvent"
+    no-loop true
+when
+    Car($carId:id)
+    $startMovingEvent1:StartMovingEvent(car.id==$carId)
+    $startMovingEvent2:StartMovingEvent(car.id==$carId, this!=$startMovingEvent1,  this before $startMovingEvent1)
+then
+    delete($startMovingEvent2);
+    info(drools,$startMovingEvent2);
+end
+
+
+rule "fire tired driving when no StartMovingEvent within 4 hour before"
+    no-loop true
+when
+    $car:Car($carId:id)
+    $points:List( size >0 )
+                            from collect( GpsPoint(car.id==$carId, speed>0) over window:time( 1m ) )
+    $lastPoint : GpsPoint(car.id==$carId) from $points.get($points.size-1)
+    not ( StartMovingEvent(car.id==$carId, this before [0,4h] $lastPoint ))
+    not ( AlarmEvent(car.id==$carId,alarm==Alarm.TIRED, end==null, this before $lastPoint))
+
+then
+    with (alarmEvent = new AlarmEvent()) {
+       alarm = Alarm.TIRED,
+       car = $car,
+       start = $lastPoint.sampleTime,
+       gpsPoint = $lastPoint
+    };
+    insert(alarmEvent)
+    alarmEventSource.fire(alarmEvent);
+    info(drools,alarmEvent);
+
+end
+
+
+rule "clear tired alarm when no speed is >0 or no gps in 20 min"
+when
+    $car:Car($carId:id)
+    $alarmEvent: AlarmEvent(car.id==$carId,alarm==Alarm.TIRED, end==null)
+    $point:GpsPoint(car.id==$carId, this after $alarmEvent)
+    not ( GpsPoint(car.id==$carId, speed>0,  this after [ 1s, 20m ] $point))
+
+
+then
+    $alarmEvent.end=new DateTime(drools.getWorkingMemory().getSessionClock().getCurrentTime());
+    update($alarmEvent)
+    clearAlarmEventSource.fire($alarmEvent);
+    info(drools,$alarmEvent);
+end

@@ -1,0 +1,54 @@
+<div class="scrollable">
+    <div class="scrollable-content section" ng-show="!done">
+
+        <form role="form" name="driverRateForm">
+            <fieldset>
+                <legend class="text-center">驾驶员评价</legend>
+
+                <div class="form-group noborder">
+                    <div star-rate rating-value="rate.driverRate" readonly="{{finished}}" max="5"></div>
+                </div>
+                <div class="form-group noborder" style="margin:20px 0;" ng-show="rate.driverRate<4">
+                    <textarea class="col-xs-12" ng-show="!finished" ng-model="rate.driverConcern" placeholder="评价描述" ng-required="rate.driverRate<4"></textarea>
+                    <div ng-if="finished" class="form-control text-control col-xs-10">{{rate.driverConcern}}</div>
+                </div>
+            </fieldset>
+
+            <fieldset>
+                <legend class="text-center">车辆评价</legend>
+
+                <div class="form-group noborder">
+                    <div star-rate rating-value="rate.carRate" readonly="{{finished}}" max="5"></div>
+                </div>
+
+                <div class="form-group noborder" style="margin:20px 0;" ng-show="rate.carRate<4">
+                    <textarea class="col-xs-12" ng-if="!finished" ng-model="rate.carConcern" placeholder="评价描述" ng-required="rate.carRate<4"></textarea>
+                    <div ng-if="finished" class="form-control text-control col-xs-10">{{rate.carConcern}}</div>
+                </div>
+            </fieldset>
+
+            <fieldset>
+                <legend class="text-center">车队评价</legend>
+
+                <div class="form-group noborder">
+                    <div star-rate rating-value="rate.fleetRate" readonly="{{finished}}" max="5"></div>
+                </div>
+
+                <div class="form-group noborder" style="margin:20px 0;" ng-show="rate.fleetRate<4">
+                    <textarea class="col-xs-12" ng-if="!finished" ng-model="rate.fleetConcern" placeholder="评价描述" ng-required="rate.fleetRate<4"></textarea>
+                    <div ng-if="finished" class="form-control text-control col-xs-10">{{rate.fleetConcern}}</div>
+                </div>
+            </fieldset>
+
+        </form>
+        <div class="bottom-btn-group">
+            <button class="btn btn-primary btn-block" ng-if="!finished" ng-disabled="driverRateForm.$invalid || processing" ng-click="submit()">提交</button>
+            <button class="btn btn-primary btn-block" ng-if="finished" ng-click="close()">确认</button>
+        </div>
+    </div>
+
+    <div class="scrollable-content section" ng-show="done">
+        <p style="text-align: center;padding:100px 0;">您的评价已提交成功！</p>
+        <a class="btn btn-primary btn-block" style="margin-top:80px;" ng-click="close()">确认</a>
+    </div>
+</div>

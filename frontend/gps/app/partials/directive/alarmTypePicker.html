@@ -1,0 +1,16 @@
+
+<button type="button" class="btn btn-link picker-toggle">
+    全部
+    <span class="caret"></span>
+</button>
+<span ng-repeat="(k, v) in type" class="value-item">
+    {{k}}<span ng-click="clearType()" class="close">&times;</span>
+</span>
+<div class="picker-menu">
+    <div class="type-list">
+        <div class="list-label">报警类型:</div>
+        <div class="list-content">
+            <span class="option-item" data-value="true" ng-repeat="type in alarmTypes" ng-click="toggleType(type.value, type.name)"  ng-class="{'active': value.alarm == type.value}">{{type.name}}</span>
+        </div>
+    </div>
+</div>

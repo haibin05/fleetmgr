@@ -1,0 +1,20 @@
+<input type="text" ng-model="value.name" class="form-control" placeholder="选择驾驶员" ng-required="true" ng-click="togglePicker()" readonly>
+
+<div class="scrollable picker-popup">
+    <div class="scrollable-header search-wrapper">
+        <input type="search" class="form-control needsclick" style="width:100%;" ng-model="params.keyword" placeholder="请输入您要搜索的驾驶员相关信息">
+        <div driver-status-picker ng-model="params" fleets="fleets" ng-change="doSearch()"></div>
+    </div>
+    <div class="scrollable-content" ui-scroll-bottom="loadMore()">
+        <div class="list-group passenger-group" ng-repeat="(k, drivers) in driverGroups" ng-show="drivers.length>0">
+            <h5 class="group-title">{{k}}</h5>
+            <div class="list-group-item" ng-repeat="p in drivers" ng-click="selectItem(p)">
+                <h5>{{p.name}}&nbsp;{{p.mobile}}</h5>
+                <p>{{p.fleet.name}}&nbsp;|&nbsp;{{p.licenseClass}}</p>
+            </div>
+        </div>
+        <div ng-show="loading" class="app-content-loading text-center">
+            <i class="fa fa-spinner fa-spin loading-spinner"></i>
+        </div>
+    </div>
+</div>

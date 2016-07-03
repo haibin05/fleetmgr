@@ -1,0 +1,25 @@
+
+<button type="button" class="btn btn-link picker-toggle">
+    全部
+    <span class="caret"></span>
+</button>
+<span ng-repeat="(k, v) in state" class="value-item">
+    {{k}}<span ng-click="clearState()" class="close">&times;</span>
+</span>
+<span ng-repeat="(k, v) in fleet" class="value-item">
+    {{k}}<span ng-click="clearFleet()" class="close">&times;</span>
+</span>
+<div class="picker-menu">
+    <div class="state-list">
+        <div class="list-label">驾驶员状态:</div>
+        <div class="list-content">
+            <span class="option-item" data-value="{{k}}" ng-click="toggleState(opt.value, opt.name)" ng-repeat="opt in driverStatusOpts" ng-class="{'active': value.state == opt.value}">{{opt.name}}</span>
+        </div>
+    </div>
+    <div class="fleet-list">
+        <div class="list-label">车队选择:</div>
+        <div class="list-content">
+            <span class="option-item" data-value="true" ng-repeat="f in fleets" ng-click="toggleFleet(f.id, f.name)" ng-class="{'active': value.fleetId == f.id}">{{f.name}}</span>
+        </div>
+    </div>
+</div>

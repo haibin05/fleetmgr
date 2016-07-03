@@ -1,0 +1,62 @@
+<div class="page-tab-header">
+    <div class="page-tab active" ng-click="toggleMode('notInDepot')" ng-class="{'active': mode === 'notInDepot'}">未回厂车辆</div>
+    <div class="page-tab" ng-click="toggleMode('inDepot')" ng-class="{'active': mode === 'inDepot'}">回厂车辆</div>
+</div>
+<div class="depot-panel notInDepot" ng-show="mode=='notInDepot'">
+    <div class="search-form clearfix">
+        <span class="input-group pull-left">
+            <input type="text" name="beginDate" class="form-control span3" datepicker-popup="yyyy-MM-dd" ng-change="dirty=true"
+                   ng-model="notInDepotParams.day" is-open="status.notInDepotOpened" ng-required="true"
+                   current-text="今天" clear-text="清除" close-text="关闭"/>
+            <span class="input-group-btn">
+              <span class="btn btn-default" ng-click="openCalendar('notInDepotOpened')"><i class="icon-calendar"></i></span>
+            </span>
+        </span>
+        <button class="btn btn-default btn-search" ng-click="doSearch()"><span>查询</span></button>
+    </div>
+    <h5>21:00前未回厂的车辆</h5>
+    <div class="fleet-list" ng-repeat="fleet in carsNotInDepot">
+        <h5>{{fleet.name}}</h5>
+        <div class="list-group">
+            <div class="list-group-item" ng-repeat="car in fleet.cars">
+                <span class="cell-icon"></span>
+                <a class="cell-badge" ng-href="#/cars/{{car.id}}/paths">{{car.badge}}</a>
+                <span class="cell-driver">驾驶员:{{car.driver.name}}</span>
+                <span class="cell-driver">{{car.eventTime| amDateFormat:'MM月DD日'}}</span>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="depot-panel inDepot" ng-show="mode=='inDepot'">
+    <div class="search-form clearfix">
+        <span class="input-group pull-left">
+            <input type="text" name="beginDate" class="form-control span3" datepicker-popup="yyyy-MM-dd" ng-change="dirty=true"
+                   ng-model="inDepotParams.day" is-open="status.inDepotOpened" ng-required="true"
+                   current-text="今天" clear-text="清除" close-text="关闭"/>
+            <span class="input-group-btn">
+              <span class="btn btn-default" ng-click="openCalendar('inDepotOpened')"><i class="icon-calendar"></i></span>
+            </span>
+        </span>
+        <div class="pull-left" style="width:65px;margin-left:10px;">
+            <input type="text" ng-model="inDepotParams.startTime" ng-pattern="/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/"
+                   placeholder="00:00" style="width:60px;height:32px;font-size:11px;" required=""/>
+        </div>
+        <div class="pull-left" style="width:6px;line-height:30px;">-</div>
+        <div class="pull-left" style="width:65px;">
+            <input type="text" ng-model="inDepotParams.endTime" ng-pattern="/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/"
+                   placeholder="00:00" style="width:60px;height:32px;font-size:11px;" required=""/>
+        </div>
+        <button class="btn btn-default btn-search" ng-click="doSearch()"><span>查询</span></button>
+    </div>
+    <div class="fleet-list" ng-repeat="fleet in carsInDepot">
+        <h5>{{fleet.name}}</h5>
+        <div class="list-group">
+            <div class="list-group-item" ng-repeat="car in fleet.cars" ng-class="{red: isEarly(car.eventTime), blue: isLate(car.eventTime)}">
+                <span class="cell-icon"></span>
+                <a class="cell-badge" ng-href="#/cars/{{car.id}}/paths">{{car.badge}}</a>
+                <span class="cell-driver">驾驶员:{{car.driver.name}}</span>
+                <span class="cell-driver">{{car.eventTime| amDateFormat:'MM月DD日 HH:mm'}}</span>
+            </div>
+        </div>
+    </div>
+</div>

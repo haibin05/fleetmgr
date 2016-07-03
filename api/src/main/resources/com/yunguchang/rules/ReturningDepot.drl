@@ -1,0 +1,71 @@
+import com.yunguchang.model.common.GpsPoint
+import com.yunguchang.model.common.Car
+import java.util.List
+import com.yunguchang.model.common.ReturningDepotEvent
+import com.yunguchang.model.common.Alarm
+import com.yunguchang.model.common.ScheduleCar
+import com.yunguchang.model.common.Schedule
+import com.yunguchang.model.common.Depot
+import org.joda.time.DateTime
+import com.yunguchang.model.common.ReturningEventType
+import com.yunguchang.gps.Const
+import function com.yunguchang.gps.GpsUtil.getDistance
+import function com.yunguchang.alarm.RulesUtil.debug;
+import function com.yunguchang.alarm.RulesUtil.info;
+
+global javax.enterprise.event.Event returningDepotEventSource
+dialect  "mvel"
+
+declare GpsPoint
+    @role( event )
+    @timestamp(sampleTime.millis)
+    @expires( 12h )
+end
+
+declare ReturningDepotEvent
+    @role( event )
+    @timestamp(eventTime.millis)
+end
+
+
+rule "only keep latest ReturningDepotEvent"
+when
+    $returnDepotEvent1:ReturningDepotEvent($carId:car.id)
+    $returnDepotEvent2:ReturningDepotEvent(car.id==$carId, this!=$returnDepotEvent1 , this before $returnDepotEvent1)
+then
+    delete($returnDepotEvent2)
+    info (drools,$returnDepotEvent2)
+end
+
+
+
+
+rule "fire car return depot"
+    no-loop true
+when
+    $car:Car($carId:id,depot!=null)
+    $points:List( size >1 ) from collect( GpsPoint(car.id==$carId, getDistance(lat,lng,$car!.depot!.lat,$car!.depot!.lng)<=com.yunguchang.gps.Const.DISTANCE_TO_DEPOT)  over window:time( 5m) )
+    $returnPoint: GpsPoint() from $points
+    $prePoint: GpsPoint(car.id==$carId,this before $returnPoint,getDistance(lat,lng,$car!.depot!.lat,$car!.depot!.lng)>com.yunguchang.gps.Const.DISTANCE_TO_DEPOT)
+    not (GpsPoint(car.id==$carId,this after $prePoint, this before $returnPoint))
+    not (ReturningDepotEvent(car.id==$carId,eventTime==$returnPoint.sampleTime))
+then
+    with(returningDepotEvent = new ReturningDepotEvent() ){
+        car=$car,
+        eventTime=$returnPoint.sampleTime,
+        returningEventType=ReturningEventType.RETURN
+    }
+    insert (returningDepotEvent)
+
+    info (drools,returningDepotEvent)
+end
+
+rule "fire returningDepotEvent when no more gps point far away from depot in 10m"
+when
+    $car:Car($carId:id,depot!=null)
+    $returningDepotEvent:ReturningDepotEvent(car.id==$carId)
+    not ( GpsPoint(car.id==$carId, getDistance(lat,lng,$car!.depot!.lat,$car!.depot!.lng)>com.yunguchang.gps.Const.DISTANCE_TO_DEPOT, this after [ 1s, 10m ] $returningDepotEvent ))
+then
+    returningDepotEventSource.fire($returningDepotEvent)
+    info (drools,$returningDepotEvent)
+end

@@ -1,0 +1,71 @@
+.tangram-suggestion-main {
+  z-index: 50;
+}
+
+.map_panel {
+  width: 280px;
+  position: absolute;
+  z-index: 6000;
+  margin-bottom: 20px;
+  background-color: #fff;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, .05);
+  box-shadow: 0 1px 1px rgba(0, 0, 0, .05);
+
+  .panel-body {
+    padding: 15px;
+  }
+  .panel-heading {
+    padding: 10px 15px;
+    border-bottom: 1px solid transparent;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+  }
+  .panel-title {
+    margin-top: 0;
+    margin-bottom: 0;
+    font-size: 16px;
+    color: inherit;
+  }
+}
+
+.panel-sm {
+  width: 240px !important;
+}
+
+.panel-lg {
+  width: 480px !important;
+}
+
+.panel-left {
+  top: 50px;
+  bottom: auto;
+  left: 480px;
+  right: auto;
+}
+
+.panel-right{
+  top: 50px;
+  bottom: auto;
+  left: auto;
+  right: 0;
+}
+
+.panel-default {
+  border-color: #ddd;
+  .panel-heading {
+    color: #333;
+    background-color: #f5f5f5;
+    border-color: #ddd;
+  }
+}
+
+.panel-info {
+  border-color: #bce8f1;
+  .panel-heading {
+    color: #31708f;
+    background-color: #d9edf7;
+    border-color: #bce8f1;
+  }
+}

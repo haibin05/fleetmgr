@@ -1,0 +1,59 @@
+<div class="scrollable">
+    <div class="scrollable-content section" ng-if="!done && schedule.status!=3 && applyList.length > 0">
+
+        <form role="form" name="scheduleForm">
+            <h5 style="background: #f7f7f7;height:42px;margin:0 -15px;line-height: 42px;padding:0 15px;">当前用车申请</h5>
+            <div style="margin-bottom:0;">
+                <div ng-repeat="p in applyList">
+                    <h5 class="clearfix" style="height:42px;line-height: 42px;border-bottom: 1px solid #d6d6d6;">
+                        <span class="pull-left m-l-10">{{p.passenger.userName}}（{{p.passenger.mobile}}）</span>
+                        <span class="pull-left m-l-10">共{{p.passengers}}人</span>
+                    </h5>
+                    <div>
+                        <p style="line-height: 23px;"><i class="m-icon m-icon-origin m-r-10" style="position:relative;top:7px;"></i> {{p.origin}}</p>
+                        <p style="padding-left:33px;line-height: 23px;">{{p.start | date: 'MM月dd日 HH:mm'}}</p>
+                        <p style="line-height: 23px;"><i class="m-icon m-icon-destination m-r-10" style="position:relative;top:7px;"></i>{{p.destination}}</p>
+                        <p style="padding-left:33px;line-height: 23px;">{{p.end | date: 'MM月dd日 HH:mm'}}</p>
+                    </div>
+                    <div class="h-divider"></div>
+                </div>
+            </div>
+
+            <h5 style="background: #f7f7f7;height:42px;margin:0 -15px;line-height: 42px;padding:0 15px;">驾驶员车辆选择</h5>
+            <div ng-repeat="p in scheduleCars track by $index">
+                <div class="form-group clearfix">
+                    <car-picker apply-id="application.id" ng-model="p.car" class="pull-left" before-change="checkCar(car)" ng-change="setDefaultDriver(car, $index)"
+                                readonly-flg="!update"></car-picker>
+                </div>
+                <div class="form-group clearfix" >
+                    <driver-picker apply-id="application.id" car-id="p.car.id" ng-model="p.driver" before-change="checkDriver(driver)"
+                                   readonly-flg="!update" class="pull-left"></driver-picker>
+                </div>
+
+                <div class="h-divider"></div>
+            </div>
+
+        </form>
+        <div class="row bottom-btn-group" ng-if="editMode">
+            <div class="col-xs-6">
+                <button class="btn btn-primary btn-block" ng-click="updateSchedule()">修改派单</button>
+            </div>
+            <div class="col-xs-6">
+                <button class="btn btn-default btn-block" confirm="确认撤销派车单?" confirm-action="deleteSchedule()">撤销派单</button>
+            </div>
+        </div>
+        <div class="bottom-btn-group" ng-if="!editMode">
+            <button class="btn btn-primary btn-block" ng-click="close()">确定</button>
+        </div>
+    </div>
+
+    <div class="scrollable-content section" ng-if="!done && (!applyList || applyList.length==0)">
+        <p style="text-align: center;padding:100px 0;">该调度单已经被撤回！</p>
+        <a class="btn btn-primary btn-block" style="margin-top:80px;" ng-click="close()">确定</a>
+    </div>
+
+    <div class="scrollable-content section" ng-if="done && schedule.status!=3">
+        <p style="text-align: center;padding:100px 0;">撤销成功！</p>
+        <a class="btn btn-primary btn-block" style="margin-top:80px;" ng-click="close()">确定</a>
+    </div>
+</div>

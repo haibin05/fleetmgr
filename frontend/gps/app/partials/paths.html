@@ -1,0 +1,31 @@
+
+<div class="top-search">
+    <div class="input-group">
+        <input type="text" class="form-control" placeholder="请输入您要搜索的车辆车牌号" ng-model="params.keyword" ng-keydown="searchKeyDown($event)">
+      <span class="input-group-btn">
+        <button class="btn btn-default" type="button" ng-click="doSearch()">搜索</button>
+      </span>
+    </div>
+</div>
+
+<div parking-fleet-picker ng-model="params" fleets="fleets"></div>
+
+<div class="list-group result-list">
+    <div class="media list-group-item" ng-repeat="car in cars" ng-click="showCarPos(car.id)">
+        <a href="#cars/{{car.id}}/paths">
+            <div class="media-left">
+                <img class="media-object" ng-src="{{carStatus[car.carState].icon}}" alt="{{carStatus[car.carState].name}}">
+            </div>
+            <div class="media-body">
+                <h4 class="media-heading">
+                    {{car.badge}}
+                </h4>
+                <p>{{car.fleet.name}} | {{car.model}} | 承载{{car.capacity}}人</p>
+            </div>
+        </a>
+    </div>
+</div>
+
+<p  class="empty-msg" ng-if="cars.length < 1">
+    没有找到符合条件的车辆
+</p>
